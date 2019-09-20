@@ -1,0 +1,226 @@
+<?xml version="1.0"?>
+<sdf version='1.6'>
+    <model name="{$modelName}">
+        <static>false</static>
+        <!--Base of the drone-->
+        <link name='drone_base'>
+            <inertial>
+                <pose> 0.000013 0,000013 -0.0383399</pose>
+                <mass> 1 </mass>
+                <inertia>
+                    <ixx>61</ixx>
+                    <ixy>-0.000004</ixy>
+                    <ixz>0.00001</ixz>
+                    <iyy>61</iyy>
+                    <iyz>0.000009</iyz>
+                    <izz>120</izz>
+                </inertia>
+            </inertial>
+            <pose>0 0 0.3 0 0 0</pose>
+            <collision name='collision'>
+                <geometry>
+                    <box>
+                        <size>.3 .3 .05</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='visual'>
+                <geometry>
+                    <mesh>
+                        <uri>model://drone/drone_base.dae</uri>
+                        <scale>0.033 0.033 0.033</scale>
+                    </mesh>
+                    
+                </geometry>
+            </visual>
+            <sensor name='my_contact_{$modelName}' type='contact'>
+                <plugin name="CollisionCounter" filename="libCollision.so"/>
+                <contact>
+                    <collision>collision</collision>
+                </contact>
+            </sensor>
+        </link>
+        <!--Blades of the drones-->
+        <link name='elica_north'>
+            <inertial>
+                <pose> 0.000013 0,000013 -0.0383399</pose>
+                <mass> 0.25 </mass>
+                <inertia>
+                    <ixx>37.067</ixx>
+                    <ixy>0.000013</ixy>
+                    <ixz>0.000125</ixz>
+                    <iyy>37.067</iyy>
+                    <iyz>0.000188</iyz>
+                    <izz>73,664</izz>
+                </inertia>
+            </inertial>
+            <pose>.116 .116 0.3</pose>
+            <collision name='collision'>
+                <geometry>
+                    <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='visual'>
+                <geometry>
+                <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                    <!-- <mesh>
+                        <uri>model://drone/elica.obj</uri>
+                        <scale>0.025 0.025 0.025</scale>
+                    </mesh> -->
+                </geometry>
+            </visual>
+        </link>
+        <link name='elica_south'>
+            <inertial>
+                <pose> 0.000013 0,000013 -0.0383399</pose>
+                <mass> 0.25 </mass>
+                <inertia>
+                    <ixx>37.067</ixx>
+                    <ixy>0.000013</ixy>
+                    <ixz>0.000125</ixz>
+                    <iyy>37.067</iyy>
+                    <iyz>0.000188</iyz>
+                    <izz>73,664</izz>
+                </inertia>
+            </inertial>
+            <pose>-.116 -.116 0.3</pose>
+            <collision name='collision'>
+                <geometry>
+                    <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='visual'>
+                <geometry>
+                <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                    <!-- <mesh>
+                        <uri>model://drone/elica.obj</uri>
+                        <scale>0.025 0.025 0.025</scale>
+                    </mesh> -->
+                </geometry>
+            </visual>
+        </link>
+        <link name='elica_east'>
+            <inertial>
+                <pose> 0.000013 0,000013 -0.0383399</pose>
+                <mass> 0.25 </mass>
+                <inertia>
+                    <ixx>37.067</ixx>
+                    <ixy>0.000013</ixy>
+                    <ixz>0.000125</ixz>
+                    <iyy>37.067</iyy>
+                    <iyz>0.000188</iyz>
+                    <izz>73,664</izz>
+                </inertia>
+            </inertial>
+            <pose>.116 -.116 0.3</pose>
+            <collision name='collision'>
+                <geometry>
+                    <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='visual'>
+                <geometry>
+                <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                    <!-- <mesh>
+                        <uri>model://drone/elica.obj</uri>
+                        <scale>0.025 0.025 0.025</scale>
+                    </mesh> -->
+                </geometry>
+            </visual>
+        </link>
+        <link name='elica_west'>
+            <inertial>
+                <pose> 0.000013 0,000013 -0.0383399</pose>
+                <mass> 0.25 </mass>
+                <inertia>
+                    <ixx>37.067</ixx>
+                    <ixy>0.000013</ixy>
+                    <ixz>0.000125</ixz>
+                    <iyy>37.067</iyy>
+                    <iyz>0.000188</iyz>
+                    <izz>73,664</izz>
+                </inertia>
+            </inertial>
+            <pose>-.116 .116 0.3</pose>
+            <collision name='collision'>
+                <geometry>
+                    <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='visual'>
+                <geometry>
+                <cylinder>
+                        <radius>.1</radius>
+                        <length>.02</length>
+                    </cylinder>
+                    <!-- <mesh>
+                        <uri>model://drone/elica.obj</uri>
+                        <scale>0.025 0.025 0.025</scale>
+                    </mesh> -->
+                </geometry>
+            </visual>
+        </link>
+
+        <!--joints of the blades-->
+        <joint type="revolute" name="north_blade_hinge">
+            <pose>0 0 0</pose>
+            <child>elica_north</child>
+            <parent>drone_base</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+            </axis>
+        </joint>
+
+        <joint type="revolute" name="south_blade_hinge">
+            <pose>0 0 0</pose>
+            <child>elica_south</child>
+            <parent>drone_base</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+            </axis>
+        </joint>
+
+        <joint type="revolute" name="east_blade_hinge">
+            <pose>0 0 0</pose>
+            <child>elica_east</child>
+            <parent>drone_base</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+            </axis>
+        </joint>
+
+        <joint type="revolute" name="west_blade_hinge">
+            <pose>0 0 0</pose>
+            <child>elica_west</child>
+            <parent>drone_base</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+            </axis>
+        </joint>
+        <!-- Plugins zone -->
+        <plugin name="CollisionAvoidance" filename="libCollisionAvoidance.so">
+            <final_position>{$modelPose}</final_position>
+        </plugin>
+    </model>
+</sdf>
