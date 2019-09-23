@@ -1,3 +1,7 @@
+// Artificial potential field (Bounded)
+// This file implement the collision avoidance system based on the artificial potential field bounded.
+// Bounded because the force is felt only inside a specidic radius from the center of the drone
+
 #include <functional>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
@@ -191,19 +195,13 @@ public:
             // 0.2 - UPDATE OTHERS POS AND VEL
             receive(server_fd, amount);
 
-            tree.buildAgentTree();
+            //COLLSION AVOIDANCE ALGORITHM HERE
 
-            // 1 - COMPUTE NEIGHBORS
-
-            agents[n - 1].computeNeighbors();
-
-            // 2 - COMPUTE VELOCITIES
-
-            agents[n - 1].computeNewVelocity();
+            
 
             // 3 - UPDATE
             
-            agents[n - 1].update();
+            
             ignition::math::Vector3d newVelocity(agents[n - 1].velocity_[0], agents[n - 1].velocity_[1], agents[n - 1].velocity_[2]);
             if(CA)
                 this->model->SetLinearVel(newVelocity);

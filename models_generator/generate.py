@@ -5,7 +5,7 @@ import fileinput
 import shutil
 import re
 
-numCopies = 3
+numCopies = 8
 
 #CREATION OF THE DRONE MODELS
 templateDir = './../models/dronetemplate'
