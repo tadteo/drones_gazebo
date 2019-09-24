@@ -28,7 +28,7 @@ namespace gazebo
 class CollisionAvoidance : public ModelPlugin
 {
 
-    static const int TotalNumberDrones = 8;
+    static const int TotalNumberDrones = 2;
 
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;

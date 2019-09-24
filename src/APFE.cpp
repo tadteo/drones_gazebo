@@ -26,10 +26,10 @@
 
 namespace gazebo
 {
-class APFB : public ModelPlugin
+class APFE : public ModelPlugin
 {
 
-    const float k = 10; // repulsion constant
+    const float k = 5; // repulsion constant
 
     static const int TotalNumberDrones = 8;
     ignition::math::Vector3d final_position;
@@ -77,19 +77,17 @@ class APFB : public ModelPlugin
             {
                 ignition::math::Vector3d positionReceived( m->x , m->y , m->z );
                 double distance = actual_position.Distance(positionReceived);
-                if( distance <= radius){
-                    Neighbour tmp;
-                    tmp.id_ = m->src;
-                    tmp.x = positionReceived.X();
-                    tmp.y = positionReceived.Y();
-                    tmp.z = positionReceived.Z();
-                    tmp.vx = m->vx;
-                    tmp.vy = m->vy;
-                    tmp.vz = m->vz;
-                    sec5[(m->src) - 1] = m->id;
-                    agents.push_back(tmp);
-                    std::cout<<"Pushed back "<< tmp.id_<<std::endl;
-                }
+                Neighbour tmp;
+                tmp.id_ = m->src;
+                tmp.x = positionReceived.X();
+                tmp.y = positionReceived.Y();
+                tmp.z = positionReceived.Z();
+                tmp.vx = m->vx;
+                tmp.vy = m->vy;
+                tmp.vz = m->vz;
+                sec5[(m->src) - 1] = m->id;
+                agents.push_back(tmp);
+                std::cout<<"Pushed back "<< tmp.id_<<std::endl;
 
             }
         }
@@ -116,7 +114,7 @@ public:
         // Listen to the update event. This event is broadcast every
         // simulation iteration.
         this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-            std::bind(&APFB::OnUpdate, this));
+            std::bind(&APFE::OnUpdate, this));
 
         //Setup of the Server
         amount = TotalNumberDrones + 2;
@@ -237,5 +235,5 @@ private:
 };
 
 // Register this plugin with the simulator
-GZ_REGISTER_MODEL_PLUGIN(APFB)
+GZ_REGISTER_MODEL_PLUGIN(APFE)
 } // namespace gazebo
