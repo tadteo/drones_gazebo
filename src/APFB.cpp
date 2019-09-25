@@ -17,7 +17,7 @@
 #include <time.h>
 #include "headers.h"
 #include "Neighbour.h"
-
+#include <cmath>
 //for logging
 #include <iostream>
 #include <fstream>
@@ -30,7 +30,7 @@ class APFB : public ModelPlugin
 {
 
     const float k = 10; // repulsion constant
-
+    const double mass = 2;
     static const int TotalNumberDrones = 8;
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
@@ -40,10 +40,10 @@ class APFB : public ModelPlugin
     std::vector<bool> sec5; //For start all the drones togheter
     std::string name;
     int n, amount, server_fd;
-    float radius = 1;
+    float radius = 0.8;
     clock_t tStart;
     bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
-
+    gazebo::common::Time prevTime;
 
     std::ofstream myFile;
 
@@ -99,7 +99,7 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
         this->model = _parent;
-
+        prevTime = this->model->GetWorld()->RealTime();
         if (_sdf->HasElement("final_position"))
             final_position = _sdf->Get<ignition::math::Vector3d>("final_position");
         else
@@ -199,17 +199,27 @@ public:
             while(!agents.empty()){
                 auto agent = agents.back();
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
-                double d = me_position.Distance(agent_position);
-                std::cout<<(radius/d)<<"\n";
-                repulsion_force += k*(radius/d)*(me_position-agent_position);
+                double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
 
+                std::cout<<(radius/d)<<"\n";
+                //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
+                repulsion_force += (100*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();
             }
+            double d = me_position.Distance(final_position);
+            ignition::math::Vector3d attractive_force = -(k*(mass*1000)/(d*d))*(me_position-final_position).Normalize();
+            repulsion_force += attractive_force;
+            // 3 - UPDATE  
 
+            // Time delta
             std::cout<< name <<" repulsion force: "<< repulsion_force << "\n";
-            
-            // 3 - UPDATE            
-            ignition::math::Vector3d newVelocity = me_velocity + repulsion_force;
+            double dt = (this->model->GetWorld()->RealTime() - prevTime).Double();
+            std::cout << "Delta t = "<<dt <<std::endl;
+            prevTime = this->model->GetWorld()->RealTime();
+            ignition::math::Vector3d repulsion_velocity = (repulsion_force/mass)*dt;
+            std::cout<< name <<" repulsion velocity: "<< repulsion_velocity << "\n";
+            ignition::math::Vector3d maxVelocity = 100*(final_position-actual_position).Normalize();
+            ignition::math::Vector3d newVelocity = repulsion_velocity.Length() > maxVelocity.Length() ? maxVelocity : repulsion_velocity ;
             std::cout<< name <<" new velocity: "<< newVelocity << "\n";
 
             if(CA)
