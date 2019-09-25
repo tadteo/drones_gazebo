@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/include/ignition/math4",
                 "/usr/include/gazebo-9",
-                "/usr/include/sdformat-6.2"
+                "/usr/include/sdformat-6.2",
+                "/usr/include/ignition/msgs1"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
