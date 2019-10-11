@@ -23,7 +23,7 @@ int server_init(int port)
 	} 
 	struct timeval read_timeout;
 	read_timeout.tv_sec = 0;
-	read_timeout.tv_usec = 100;
+	read_timeout.tv_usec = 10;
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
 	memset(&servaddr, 0, sizeof(servaddr)); 

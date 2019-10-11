@@ -17,7 +17,7 @@
 #include <time.h>
 #include "headers.h"
 #include "Neighbour.h"
-#include <cmath>
+
 //for logging
 #include <iostream>
 #include <fstream>
@@ -26,7 +26,7 @@
 
 namespace gazebo
 {
-class APFB : public ModelPlugin
+class APFE : public ModelPlugin
 {
 
     const float k = 10; // repulsion constant
@@ -42,8 +42,10 @@ class APFB : public ModelPlugin
     int n, amount, server_fd;
     float radius = 0.8;
     clock_t tStart;
-    bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
     gazebo::common::Time prevTime;
+
+    bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
+
 
     std::ofstream myFile;
 
@@ -77,20 +79,16 @@ class APFB : public ModelPlugin
             {
                 ignition::math::Vector3d positionReceived( m->x , m->y , m->z );
                 double distance = actual_position.Distance(positionReceived);
-                if( distance <= radius){
-                    Neighbour tmp;
-                    tmp.id_ = m->src;
-                    tmp.x = positionReceived.X();
-                    tmp.y = positionReceived.Y();
-                    tmp.z = positionReceived.Z();
-                    tmp.vx = m->vx;
-                    tmp.vy = m->vy;
-                    tmp.vz = m->vz;
-                    sec5[(m->src) - 1] = m->id;
-                    agents.push_back(tmp);
-                    //std::cout<<"Pushed back "<< tmp.id_<<std::endl;
-                }
-
+                Neighbour tmp;
+                tmp.id_ = m->src;
+                tmp.x = positionReceived.X();
+                tmp.y = positionReceived.Y();
+                tmp.z = positionReceived.Z();
+                tmp.vx = m->vx;
+                tmp.vy = m->vy;
+                tmp.vz = m->vz;
+                sec5[(m->src) - 1] = m->id;
+                agents.push_back(tmp);
             }
         }
     }
@@ -104,24 +102,26 @@ public:
             final_position = _sdf->Get<ignition::math::Vector3d>("final_position");
         else
             final_position = ignition::math::Vector3d(0, 0, 0);
+        
+        //Setup of this drone Agent
+        name = this->model->GetName();
+        n = std::stoi(name.substr(6));
+        me.id_ = n;
 
         std::string world_name = this->model->GetWorld()->Name();
         std::cout<<"World name = "<<world_name<<std::endl;
         TotalNumberDrones = std::stoi(world_name.substr(6));
         std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
+
         //initialize vectors of agents and agents_pntr
         agents.resize(TotalNumberDrones);
 
-        //Setup of this drone Agent
-        name = this->model->GetName();
-        n = std::stoi(name.substr(6));
-        //std::cout<< "numero "<< n <<std::endl;
-        me.id_ = n;
+        
 
         // Listen to the update event. This event is broadcast every
         // simulation iteration.
         this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-            std::bind(&APFB::OnUpdate, this));
+            std::bind(&APFE::OnUpdate, this));
 
         //Setup of the Server
         amount = TotalNumberDrones + 2;
@@ -205,6 +205,8 @@ public:
                 auto agent = agents.back();
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
                 double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
+
+                std::cout<<(radius/d)<<"\n";
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
                 repulsion_force += (100*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();
@@ -250,5 +252,5 @@ private:
 };
 
 // Register this plugin with the simulator
-GZ_REGISTER_MODEL_PLUGIN(APFB)
+GZ_REGISTER_MODEL_PLUGIN(APFE)
 } // namespace gazebo

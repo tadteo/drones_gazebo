@@ -28,7 +28,7 @@ namespace gazebo
 class CollisionAvoidance : public ModelPlugin
 {
 
-    static const int TotalNumberDrones = 8;
+    int TotalNumberDrones = 2;
 
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
@@ -95,13 +95,22 @@ public:
         else
             final_position = ignition::math::Vector3d(0, 0, 0);
 
-        //initialize vectors of agents and agents_pntr
-        agents.resize(TotalNumberDrones);
-        agents_pntr.resize(TotalNumberDrones);
+        
 
         //Setup of this drone Agent
         name = this->model->GetName();
-        n = std::stoi(name.substr(6, 1));
+        n = std::stoi(name.substr(6));
+
+        std::string world_name = this->model->GetWorld()->Name();
+        std::cout<<"World name = "<<world_name<<std::endl;
+        TotalNumberDrones = std::stoi(world_name.substr(6));
+        std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
+
+
+        //initialize vectors of agents and agents_pntr
+        agents.resize(TotalNumberDrones);
+        agents_pntr.resize(TotalNumberDrones);
+        
         agents[n - 1].id_ = n;
         agents[n - 1].maxNeighbors_ = TotalNumberDrones;
         agents[n - 1].maxSpeed_ = 100;

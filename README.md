@@ -8,5 +8,5 @@ python generate.py
 ```
 Run the simulation on gazebo with
 ```
-gazebo world_<number of drones>_drones.world
+gazebo drones_<number of drones>.world
 ```

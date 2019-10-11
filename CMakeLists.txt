@@ -26,6 +26,8 @@ add_library(ORCA ${ORCA_HEADERS} ${ORCA_SOURCES})
 add_library(Collision SHARED src/collision2.cpp)
 add_library(CollisionAvoidance SHARED src/CollisionAvoidance.cpp)
 add_library(APFB SHARED src/APFB.cpp)
+add_library(APFE SHARED src/APFE.cpp)
 
 target_link_libraries(CollisionAvoidance DroneC DroneS ORCA) #Love this line of code so much! <3
 target_link_libraries(APFB DroneC DroneS )
+target_link_libraries(APFE DroneC DroneS )

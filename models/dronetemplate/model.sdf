@@ -219,7 +219,7 @@
             </axis>
         </joint>
         <!-- Plugins zone -->
-        <plugin name="CollisionAvoidance" filename="libCollisionAvoidance.so">
+        <plugin name="CollisionAvoidance" filename="{$modelAlgorithm}">
             <final_position>{$modelPose}</final_position>
         </plugin>
     </model>
