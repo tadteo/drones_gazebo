@@ -65,14 +65,14 @@
             </collision>
             <visual name='visual'>
                 <geometry>
-                <cylinder>
+                <!-- <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
-                    </cylinder>
-                    <!-- <mesh>
+                    </cylinder> -->
+                    <mesh>
                         <uri>model://drone/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
-                    </mesh> -->
+                    </mesh>
                 </geometry>
             </visual>
         </link>
@@ -100,14 +100,14 @@
             </collision>
             <visual name='visual'>
                 <geometry>
-                <cylinder>
+                <!-- <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
-                    </cylinder>
-                    <!-- <mesh>
+                    </cylinder> -->
+                    <mesh>
                         <uri>model://drone/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
-                    </mesh> -->
+                    </mesh>
                 </geometry>
             </visual>
         </link>
@@ -135,14 +135,14 @@
             </collision>
             <visual name='visual'>
                 <geometry>
-                <cylinder>
+                <!-- <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
-                    </cylinder>
-                    <!-- <mesh>
+                    </cylinder> -->
+                    <mesh>
                         <uri>model://drone/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
-                    </mesh> -->
+                    </mesh>
                 </geometry>
             </visual>
         </link>
@@ -170,14 +170,14 @@
             </collision>
             <visual name='visual'>
                 <geometry>
-                <cylinder>
+                <!-- <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
-                    </cylinder>
-                    <!-- <mesh>
+                    </cylinder> -->
+                    <mesh>
                         <uri>model://drone/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
-                    </mesh> -->
+                    </mesh>
                 </geometry>
             </visual>
         </link>
