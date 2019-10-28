@@ -17,6 +17,7 @@
 #include "Agent.h"
 #include "KdTree.h"
 #include "headers.h"
+#include "settings.h"
 
 //for logging
 #include <iostream>
@@ -27,9 +28,6 @@ namespace gazebo
 {
 class CollisionAvoidance : public ModelPlugin
 {
-
-    int TotalNumberDrones = 2;
-
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
     ignition::math::Pose3<double> pose;
@@ -113,7 +111,7 @@ public:
         
         agents[n - 1].id_ = n;
         agents[n - 1].maxNeighbors_ = TotalNumberDrones;
-        agents[n - 1].maxSpeed_ = 100;
+        agents[n - 1].maxSpeed_ = MAX_VELOCITY;
         agents[n - 1].neighborDist_ = 1;
         agents[n - 1].radius_ = 0.4;
         agents[n - 1].timeHorizon_ = 50.0f;
@@ -150,7 +148,7 @@ public:
 public:
     void OnUpdate()
     {
-        if (actual_position.Distance(final_position) > 0.5)
+        if (actual_position.Distance(final_position) > 0.2)
         {
             
             // 0.0 - UPDATE MY POS and VEL

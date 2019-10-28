@@ -17,6 +17,7 @@
 #include <time.h>
 #include "headers.h"
 #include "Neighbour.h"
+#include "settings.h"
 
 //for logging
 #include <iostream>
@@ -29,9 +30,6 @@ namespace gazebo
 class EAPF : public ModelPlugin
 {
 
-    const float k = 10; // repulsion constant
-    const double mass = 2;
-    int TotalNumberDrones = 8;
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
     neighbour me;
@@ -40,7 +38,6 @@ class EAPF : public ModelPlugin
     std::vector<bool> sec5; //For start all the drones togheter
     std::string name;
     int n, amount, server_fd;
-    float radius = 0.8;
     clock_t tStart;
     gazebo::common::Time prevTime;
 
@@ -223,7 +220,7 @@ public:
             prevTime = this->model->GetWorld()->RealTime();
             ignition::math::Vector3d repulsion_velocity = (repulsion_force/mass)*dt;
             //std::cout<< name <<" repulsion velocity: "<< repulsion_velocity << "\n";
-            ignition::math::Vector3d maxVelocity = 100*(final_position-actual_position).Normalize();
+            ignition::math::Vector3d maxVelocity = MAX_VELOCITY*(final_position-actual_position).Normalize();
             ignition::math::Vector3d newVelocity = repulsion_velocity.Length() > maxVelocity.Length() ? maxVelocity : repulsion_velocity ;
             //std::cout<< name <<" new velocity: "<< newVelocity << "\n";
 

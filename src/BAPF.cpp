@@ -17,6 +17,7 @@
 #include <time.h>
 #include "headers.h"
 #include "Neighbour.h"
+#include "settings.h"
 #include <cmath>
 //for logging
 #include <iostream>
@@ -28,10 +29,6 @@ namespace gazebo
 {
 class BAPF : public ModelPlugin
 {
-
-    const float k = 10; // repulsion constant
-    const double mass = 2;
-    int TotalNumberDrones = 8;
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
     neighbour me;
@@ -40,7 +37,7 @@ class BAPF : public ModelPlugin
     std::vector<bool> sec5; //For start all the drones togheter
     std::string name;
     int n, amount, server_fd;
-    float radius = 0.8;
+    
     clock_t tStart;
     bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
     bool swap = true;
@@ -144,7 +141,7 @@ public:
 public:
     void OnUpdate()
     {
-        if (actual_position.Distance(final_position) > 1)
+        if (actual_position.Distance(final_position) > 0.3)
         {
             
             // 0.0 - UPDATE MY POS and VEL
@@ -212,22 +209,22 @@ public:
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
                 double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-                repulsion_force += (200*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
+                repulsion_force += (500*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();
             }
             double d = me_position.Distance(final_position);
-            ignition::math::Vector3d attractive_force = -(k*(mass*200)/(d*d))*(me_position-final_position).Normalize();
+            ignition::math::Vector3d attractive_force = -(k*(mass*2000)/(d*d))*(me_position-final_position).Normalize();
             repulsion_force += attractive_force;
             // 3 - UPDATE  
 
             // Time delta
             //std::cout<< name <<" repulsion force: "<< repulsion_force << "\n";
-            double dt = (this->model->GetWorld()->RealTime() - prevTime).Double();
-            //std::cout << "Delta t = "<<dt <<std::endl;
-            prevTime = this->model->GetWorld()->RealTime();
+            double dt = (this->model->GetWorld()->SimTime() - prevTime).Double();
+            std::cout << "Delta t = "<<dt <<std::endl;
+            prevTime = this->model->GetWorld()->SimTime();
             ignition::math::Vector3d repulsion_velocity = (repulsion_force/mass)*dt;
             //std::cout<< name <<" repulsion velocity: "<< repulsion_velocity << "\n";
-            ignition::math::Vector3d maxVelocity = 150*(final_position-actual_position).Normalize();
+            ignition::math::Vector3d maxVelocity = MAX_VELOCITY*(final_position-actual_position).Normalize();
             //maxVelocity.X(maxVelocity.X()*200);
             //maxVelocity.Y(maxVelocity.Y()*200);
             ignition::math::Vector3d newVelocity;
@@ -247,25 +244,26 @@ public:
         }
         else
         {
-            //this->model->SetLinearVel(final_position*0);
-            if (swap){
-                srand (time(NULL));
-                int rCirconferenza = 5;
-                float alpha = (std::rand() % 360)*M_PI/180;
-                //std::cout<<name<<" angolo "<< alpha << "\n "<< "X: "<<rCirconferenza*std::cos(alpha)<<"\nY: "<<rCirconferenza*std::sin(alpha)<<std::endl; 
-                final_position.X(rCirconferenza*std::cos(alpha));
-                final_position.Y(rCirconferenza*std::sin(alpha));
-                final_position.Z(5);
-                //std::cout<<name <<" final position: "<< final_position<<std::endl;
-                swap=false;
-            }else
-            {
-                final_position.X(0);
-                final_position.Y(0);
-                final_position.Z(5);
-                //std::cout<<name <<" final position: "<< final_position<<std::endl;
-                swap=true;
-            }
+            this->model->SetLinearVel(final_position*0);
+            std::cout <<"Drone_"<<name<<" ARRIVATO\n";
+            // if (swap){
+            //     srand (time(NULL));
+            //     int rCirconferenza = 5;
+            //     float alpha = (std::rand() % 360)*M_PI/180;
+            //     //std::cout<<name<<" angolo "<< alpha << "\n "<< "X: "<<rCirconferenza*std::cos(alpha)<<"\nY: "<<rCirconferenza*std::sin(alpha)<<std::endl; 
+            //     final_position.X(rCirconferenza*std::cos(alpha));
+            //     final_position.Y(rCirconferenza*std::sin(alpha));
+            //     final_position.Z(5);
+            //     //std::cout<<name <<" final position: "<< final_position<<std::endl;
+            //     swap=false;
+            // }else
+            // {
+            //     final_position.X(0);
+            //     final_position.Y(0);
+            //     final_position.Z(5);
+            //     //std::cout<<name <<" final position: "<< final_position<<std::endl;
+            //     swap=true;
+            // }
             
             //myFile.close();
         }
