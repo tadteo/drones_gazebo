@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.4">
-    <world name="world_10">
+    <world name="world_8">
         <include>
             <uri>model://ground_plane</uri>
         </include>
@@ -47,16 +47,6 @@
 			<name>drone_8</name>
 			<uri>model://drone_8</uri>
 			<pose>14 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_9</name>
-			<uri>model://drone_9</uri>
-			<pose>16 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_10</name>
-			<uri>model://drone_10</uri>
-			<pose>18 0 2 0 0 0</pose>
 		</include>
 
     </world>

@@ -30,6 +30,7 @@ class CollisionAvoidance : public ModelPlugin
 {
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
+    ignition::math::Vector3d prev_position;
     ignition::math::Pose3<double> pose;
     std::vector<ORCA::Agent> agents;
     std::vector<ORCA::Agent *> agents_pntr;
@@ -39,8 +40,8 @@ class CollisionAvoidance : public ModelPlugin
     ORCA::KdTree tree;
     clock_t tStart;
     bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
-
-
+    bool stopped = true;
+    double actual_trajectory =0;
     std::ofstream myFile;
 
     void send_to_all(Message *m, int amount)
@@ -133,8 +134,8 @@ public:
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
         //per il logging
-        //std::string file = "/home/matteo/Desktop/Results/" + name +" testX_CA0.csv";
-        //myFile.open(file);
+        std::string file = name +" testX_ORCA.txt";
+        myFile.open(file);
 
         //per la sincronizzazione
         for (int i = 0; i <= TotalNumberDrones; i++)
@@ -142,15 +143,18 @@ public:
             sec5.push_back(false);
         }
         tStart = clock();
+        myFile<<"Traiettoria originiale :"<<actual_position.Distance(final_position)<<std::endl;
     }
 
     // Called by the world update start event
 public:
     void OnUpdate()
     {
+
         if (actual_position.Distance(final_position) > 0.2)
         {
             
+
             // 0.0 - UPDATE MY POS and VEL
             pose = this->model->WorldPose();
             actual_position = pose.Pos();
@@ -158,6 +162,15 @@ public:
             agents[n - 1].position_[0] = pose.Pos().X();
             agents[n - 1].position_[1] = pose.Pos().Y();
             agents[n - 1].position_[2] = pose.Pos().Z();
+
+            //Calcolo il delta spazio ad ogni delta t e li sommo
+            double ds = (actual_position.Distance(prev_position));
+            actual_trajectory += ds;
+            //std::cout << "Delta spazio = "<<ds <<std::endl;
+            prev_position = actual_position;
+
+
+
             bool go = true;
             for (int i = 0; i < TotalNumberDrones; i++)
             {
@@ -220,8 +233,15 @@ public:
         }
         else
         {
+            if (stopped) {
+                stopped = false;
+                myFile<<"Final trajectory: "<< actual_trajectory;
+                myFile<<"Tempo di esecuzione: "<< this->model->GetWorld()->SimTime();
+                myFile.close();
+                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+            }
             this->model->SetLinearVel(final_position*0);
-            //myFile.close();
+            
         }
         
         
