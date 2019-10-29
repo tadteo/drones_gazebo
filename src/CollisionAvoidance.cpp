@@ -41,8 +41,10 @@ class CollisionAvoidance : public ModelPlugin
     clock_t tStart;
     bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
     bool stopped = true;
+    bool first = true;
     double actual_trajectory =0;
     std::ofstream myFile;
+    common::Time execution_time = 0;
 
     void send_to_all(Message *m, int amount)
     {
@@ -101,9 +103,9 @@ public:
         n = std::stoi(name.substr(6));
 
         std::string world_name = this->model->GetWorld()->Name();
-        std::cout<<"World name = "<<world_name<<std::endl;
+        //std::cout<<"World name = "<<world_name<<std::endl;
         TotalNumberDrones = std::stoi(world_name.substr(6));
-        std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
+        //std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
 
 
         //initialize vectors of agents and agents_pntr
@@ -134,8 +136,8 @@ public:
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
         //per il logging
-        std::string file = name +" testX_ORCA.txt";
-        myFile.open(file);
+        std::string file = "./log/"+name +"_testX_ORCA.txt";
+        myFile.open(file,std::ios::app);
 
         //per la sincronizzazione
         for (int i = 0; i <= TotalNumberDrones; i++)
@@ -143,14 +145,19 @@ public:
             sec5.push_back(false);
         }
         tStart = clock();
-        myFile<<"Traiettoria originiale :"<<actual_position.Distance(final_position)<<std::endl;
+        
     }
 
     // Called by the world update start event
 public:
     void OnUpdate()
     {
-
+        if (first){
+            first = false;
+            actual_position = this->model->WorldPose().Pos();
+            myFile<<"Traiettoria originiale: "<< actual_position.Distance(final_position) <<std::endl;
+            execution_time = this->model->GetWorld()->SimTime();
+        }
         if (actual_position.Distance(final_position) > 0.2)
         {
             
@@ -235,8 +242,10 @@ public:
         {
             if (stopped) {
                 stopped = false;
-                myFile<<"Final trajectory: "<< actual_trajectory;
-                myFile<<"Tempo di esecuzione: "<< this->model->GetWorld()->SimTime();
+                myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
+                execution_time = this->model->GetWorld()->SimTime() - execution_time;
+                
+                myFile<<"Tempo di esecuzione: "<< execution_time.Double() <<std::endl<<"____________________________________"<<std::endl;
                 myFile.close();
                 std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
             }

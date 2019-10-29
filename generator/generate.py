@@ -9,7 +9,7 @@ import re
 #CREATION OF THE DRONE MODELS
 def main(argv):
     
-    numCopies = 8
+    numCopies = 5
     CAalgorithm = 'libCollisionAvoidance.so'
 
     templateDir = './../models/dronetemplate'

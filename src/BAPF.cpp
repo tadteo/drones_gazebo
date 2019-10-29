@@ -43,7 +43,14 @@ class BAPF : public ModelPlugin
     bool swap = true;
     gazebo::common::Time prevTime;
 
+    //for the logging
+    bool stopped = true;
+    bool first = true;
+    double actual_trajectory =0;
     std::ofstream myFile;
+    common::Time execution_time = 0;
+    ignition::math::Vector3d prev_position;
+
 
     void send_to_all(Message *m, int amount)
     {
@@ -124,10 +131,6 @@ public:
         //Setup of the Server
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
-        
-        //per il logging
-        //std::string file = "/home/matteo/Desktop/Results/" + name +" testX_CA0.csv";
-        //myFile.open(file);
 
         //per la sincronizzazione
         for (int i = 0; i <= TotalNumberDrones; i++)
@@ -135,12 +138,22 @@ public:
             sec5.push_back(false);
         }
         tStart = clock();
+        
+        //per il logging
+        std::string file = "./log/"+name +"_testX_BAPF.txt";
+        myFile.open(file,std::ios::app);
     }
 
     // Called by the world update start event
 public:
     void OnUpdate()
     {
+        if (first){
+            first = false;
+            actual_position = this->model->WorldPose().Pos();
+            myFile<<"Traiettoria originiale: "<< actual_position.Distance(final_position) <<std::endl;
+            execution_time = this->model->GetWorld()->SimTime();
+        }
         if (actual_position.Distance(final_position) > 0.3)
         {
             
@@ -151,6 +164,12 @@ public:
             me.x = pose.Pos().X();
             me.y = pose.Pos().Y();
             me.z = pose.Pos().Z();
+
+            //Calcolo il delta spazio ad ogni delta t e li sommo
+            double ds = (actual_position.Distance(prev_position));
+            actual_trajectory += ds;
+            //std::cout << "Delta spazio = "<<ds <<std::endl;
+            prev_position = actual_position;
             
             //syncronization for start
             bool go = true;
@@ -244,8 +263,15 @@ public:
         }
         else
         {
+            if (stopped) {
+                stopped = false;
+                myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
+                execution_time = this->model->GetWorld()->SimTime() - execution_time;
+                myFile<<"Tempo di esecuzione: "<< execution_time.Double()<<std::endl<<"_________________________________"<<std::endl;
+                myFile.close();
+                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+            }
             this->model->SetLinearVel(final_position*0);
-            std::cout <<"Drone_"<<name<<" ARRIVATO\n";
             // if (swap){
             //     srand (time(NULL));
             //     int rCirconferenza = 5;
