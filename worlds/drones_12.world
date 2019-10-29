@@ -1,73 +1,0 @@
-<?xml version="1.0" ?>
-<sdf version="1.4">
-    <world name="world_12">
-        <include>
-            <uri>model://ground_plane</uri>
-        </include>
-        <include>
-            <uri>model://sun</uri>
-        </include>
-        <!-- Drones -->
-        		<include>
-			<name>drone_1</name>
-			<uri>model://drone_1</uri>
-			<pose>0 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_2</name>
-			<uri>model://drone_2</uri>
-			<pose>1 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_3</name>
-			<uri>model://drone_3</uri>
-			<pose>2 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_4</name>
-			<uri>model://drone_4</uri>
-			<pose>3 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_5</name>
-			<uri>model://drone_5</uri>
-			<pose>4 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_6</name>
-			<uri>model://drone_6</uri>
-			<pose>5 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_7</name>
-			<uri>model://drone_7</uri>
-			<pose>6 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_8</name>
-			<uri>model://drone_8</uri>
-			<pose>7 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_9</name>
-			<uri>model://drone_9</uri>
-			<pose>8 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_10</name>
-			<uri>model://drone_10</uri>
-			<pose>9 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_11</name>
-			<uri>model://drone_11</uri>
-			<pose>10 0 2 0 0 0</pose>
-		</include>
-		<include>
-			<name>drone_12</name>
-			<uri>model://drone_12</uri>
-			<pose>11 0 2 0 0 0</pose>
-		</include>
-
-    </world>
-</sdf>

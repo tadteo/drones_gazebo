@@ -17,6 +17,7 @@
 #include "Agent.h"
 #include "KdTree.h"
 #include "headers.h"
+#include "settings.h"
 
 //for logging
 #include <iostream>
@@ -27,11 +28,9 @@ namespace gazebo
 {
 class CollisionAvoidance : public ModelPlugin
 {
-
-    int TotalNumberDrones = 2;
-
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
+    ignition::math::Vector3d prev_position;
     ignition::math::Pose3<double> pose;
     std::vector<ORCA::Agent> agents;
     std::vector<ORCA::Agent *> agents_pntr;
@@ -41,9 +40,11 @@ class CollisionAvoidance : public ModelPlugin
     ORCA::KdTree tree;
     clock_t tStart;
     bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
-
-
+    bool stopped = true;
+    bool first = true;
+    double actual_trajectory =0;
     std::ofstream myFile;
+    common::Time execution_time = 0;
 
     void send_to_all(Message *m, int amount)
     {
@@ -102,9 +103,9 @@ public:
         n = std::stoi(name.substr(6));
 
         std::string world_name = this->model->GetWorld()->Name();
-        std::cout<<"World name = "<<world_name<<std::endl;
+        //std::cout<<"World name = "<<world_name<<std::endl;
         TotalNumberDrones = std::stoi(world_name.substr(6));
-        std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
+        //std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
 
 
         //initialize vectors of agents and agents_pntr
@@ -113,7 +114,7 @@ public:
         
         agents[n - 1].id_ = n;
         agents[n - 1].maxNeighbors_ = TotalNumberDrones;
-        agents[n - 1].maxSpeed_ = 100;
+        agents[n - 1].maxSpeed_ = MAX_VELOCITY;
         agents[n - 1].neighborDist_ = 1;
         agents[n - 1].radius_ = 0.4;
         agents[n - 1].timeHorizon_ = 50.0f;
@@ -135,8 +136,8 @@ public:
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
         //per il logging
-        //std::string file = "/home/matteo/Desktop/Results/" + name +" testX_CA0.csv";
-        //myFile.open(file);
+        std::string file = "./log/"+name +"_testX_ORCA.txt";
+        myFile.open(file,std::ios::app);
 
         //per la sincronizzazione
         for (int i = 0; i <= TotalNumberDrones; i++)
@@ -144,15 +145,23 @@ public:
             sec5.push_back(false);
         }
         tStart = clock();
+        
     }
 
     // Called by the world update start event
 public:
     void OnUpdate()
     {
-        if (actual_position.Distance(final_position) > 0.5)
+        if (first){
+            first = false;
+            actual_position = this->model->WorldPose().Pos();
+            myFile<<"Traiettoria originiale: "<< actual_position.Distance(final_position) <<std::endl;
+            execution_time = this->model->GetWorld()->SimTime();
+        }
+        if (actual_position.Distance(final_position) > 0.2)
         {
             
+
             // 0.0 - UPDATE MY POS and VEL
             pose = this->model->WorldPose();
             actual_position = pose.Pos();
@@ -160,6 +169,15 @@ public:
             agents[n - 1].position_[0] = pose.Pos().X();
             agents[n - 1].position_[1] = pose.Pos().Y();
             agents[n - 1].position_[2] = pose.Pos().Z();
+
+            //Calcolo il delta spazio ad ogni delta t e li sommo
+            double ds = (actual_position.Distance(prev_position));
+            actual_trajectory += ds;
+            //std::cout << "Delta spazio = "<<ds <<std::endl;
+            prev_position = actual_position;
+
+
+
             bool go = true;
             for (int i = 0; i < TotalNumberDrones; i++)
             {
@@ -222,8 +240,17 @@ public:
         }
         else
         {
+            if (stopped) {
+                stopped = false;
+                myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
+                execution_time = this->model->GetWorld()->SimTime() - execution_time;
+                
+                myFile<<"Tempo di esecuzione: "<< execution_time.Double() <<std::endl<<"____________________________________"<<std::endl;
+                myFile.close();
+                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+            }
             this->model->SetLinearVel(final_position*0);
-            //myFile.close();
+            
         }
         
         

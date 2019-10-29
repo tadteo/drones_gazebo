@@ -1,3 +1,4 @@
 build/*
 models/drone_*
 worlds/world_?_drones.*
+drone_*

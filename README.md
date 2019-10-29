@@ -4,7 +4,9 @@ An autonomous system systems of drones collision avoidance implementations
 Install gazebo export path of model/world/plugins to .bashrc file
 generetare world file wiht
 ```
-python generate.py
+python generate.py -n <number_of_drones> -a <algorithm>
+
+<algorithm>: ORCA / BAPF / EAPF
 ```
 Run the simulation on gazebo with
 ```

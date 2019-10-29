@@ -9,7 +9,7 @@ import re
 #CREATION OF THE DRONE MODELS
 def main(argv):
     
-    numCopies = 8
+    numCopies = 5
     CAalgorithm = 'libCollisionAvoidance.so'
 
     templateDir = './../models/dronetemplate'
@@ -43,9 +43,11 @@ def main(argv):
             if (arg == 'ORCA'):
                 CAalgorithm= 'libCollisionAvoidance.so'
             elif (arg == 'BAPF'):
-                CAalgorithm= 'libAPFB.so'
+                CAalgorithm= 'libBAPF.so'
             elif (arg == 'EAPF'):
-                CAalgorithm = "libAPFE.so"
+                CAalgorithm = "libEAPF.so"
+            elif (arg == 'boid'):
+                CAalgorithm = "libboid.so"
             else:
                 print("Invalid Argument. Using default algorithm (ORCA)")
     print("Il numero di droni da creare e': "+str(numCopies)+'\n')
@@ -85,8 +87,8 @@ def main(argv):
         newSdfFile = open(os.path.join(newDir,sdfFileName),'w')
         for line in sdfFile:
             if templatePose in line:
-                num = numCopies-i
-                newSdfFile.write(line.replace(templatePose, (str(num) +' 0 10')))
+                num = (numCopies-i)*2
+                newSdfFile.write(line.replace(templatePose, (str(num) +' 0 5')))
             elif templateIP in line:
                 newSdfFile.write(line.replace(templateIP, '127.0.0.'+str(i)))
             elif templateAlgorithm in line:
@@ -106,7 +108,7 @@ def main(argv):
     newWorldFile = open(os.path.join(worldsDir,newWorldName),'w')
     models=""
     for i in range(1,numCopies+1):
-            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str(i-1)+" 0 2 0 0 0</pose>\n\t\t</include>\n"
+            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str((i-1)*2)+" 0 2 0 0 0</pose>\n\t\t</include>\n"
     
     for line in worldFile:
         if templateWorldModels in line:

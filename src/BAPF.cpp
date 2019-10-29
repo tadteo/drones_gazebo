@@ -17,6 +17,7 @@
 #include <time.h>
 #include "headers.h"
 #include "Neighbour.h"
+#include "settings.h"
 #include <cmath>
 //for logging
 #include <iostream>
@@ -26,12 +27,8 @@
 
 namespace gazebo
 {
-class APFB : public ModelPlugin
+class BAPF : public ModelPlugin
 {
-
-    const float k = 10; // repulsion constant
-    const double mass = 2;
-    int TotalNumberDrones = 8;
     ignition::math::Vector3d final_position;
     ignition::math::Vector3d actual_position;
     neighbour me;
@@ -40,12 +37,20 @@ class APFB : public ModelPlugin
     std::vector<bool> sec5; //For start all the drones togheter
     std::string name;
     int n, amount, server_fd;
-    float radius = 0.8;
+    
     clock_t tStart;
     bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
+    bool swap = true;
     gazebo::common::Time prevTime;
 
+    //for the logging
+    bool stopped = true;
+    bool first = true;
+    double actual_trajectory =0;
     std::ofstream myFile;
+    common::Time execution_time = 0;
+    ignition::math::Vector3d prev_position;
+
 
     void send_to_all(Message *m, int amount)
     {
@@ -106,9 +111,9 @@ public:
             final_position = ignition::math::Vector3d(0, 0, 0);
 
         std::string world_name = this->model->GetWorld()->Name();
-        std::cout<<"World name = "<<world_name<<std::endl;
+        //std::cout<<"World name = "<<world_name<<std::endl;
         TotalNumberDrones = std::stoi(world_name.substr(6));
-        std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
+        //std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
         //initialize vectors of agents and agents_pntr
         agents.resize(TotalNumberDrones);
 
@@ -121,15 +126,11 @@ public:
         // Listen to the update event. This event is broadcast every
         // simulation iteration.
         this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-            std::bind(&APFB::OnUpdate, this));
+            std::bind(&BAPF::OnUpdate, this));
 
         //Setup of the Server
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
-        
-        //per il logging
-        //std::string file = "/home/matteo/Desktop/Results/" + name +" testX_CA0.csv";
-        //myFile.open(file);
 
         //per la sincronizzazione
         for (int i = 0; i <= TotalNumberDrones; i++)
@@ -137,13 +138,23 @@ public:
             sec5.push_back(false);
         }
         tStart = clock();
+        
+        //per il logging
+        std::string file = "./log/"+name +"_testX_BAPF.txt";
+        myFile.open(file,std::ios::app);
     }
 
     // Called by the world update start event
 public:
     void OnUpdate()
     {
-        if (actual_position.Distance(final_position) > 0.5)
+        if (first){
+            first = false;
+            actual_position = this->model->WorldPose().Pos();
+            myFile<<"Traiettoria originiale: "<< actual_position.Distance(final_position) <<std::endl;
+            execution_time = this->model->GetWorld()->SimTime();
+        }
+        if (actual_position.Distance(final_position) > 0.3)
         {
             
             // 0.0 - UPDATE MY POS and VEL
@@ -153,6 +164,12 @@ public:
             me.x = pose.Pos().X();
             me.y = pose.Pos().Y();
             me.z = pose.Pos().Z();
+
+            //Calcolo il delta spazio ad ogni delta t e li sommo
+            double ds = (actual_position.Distance(prev_position));
+            actual_trajectory += ds;
+            //std::cout << "Delta spazio = "<<ds <<std::endl;
+            prev_position = actual_position;
             
             //syncronization for start
             bool go = true;
@@ -201,28 +218,41 @@ public:
             ignition::math::Vector3d me_position(me.x,me.y,me.z);
             ignition::math::Vector3d me_velocity(me.vx,me.vy,me.vz);
             ignition::math::Vector3d repulsion_force(0,0,0);
+            //Se non ho vicini vai alla massima velocita
+            bool vai_easy=false;
+            if(agents.empty())
+                vai_easy=true;
+
             while(!agents.empty()){
                 auto agent = agents.back();
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
                 double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-                repulsion_force += (100*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
+                repulsion_force += (500*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();
             }
             double d = me_position.Distance(final_position);
-            ignition::math::Vector3d attractive_force = -(k*(mass*1000)/(d*d))*(me_position-final_position).Normalize();
+            ignition::math::Vector3d attractive_force = -(k*(mass*2000)/(d*d))*(me_position-final_position).Normalize();
             repulsion_force += attractive_force;
             // 3 - UPDATE  
 
             // Time delta
             //std::cout<< name <<" repulsion force: "<< repulsion_force << "\n";
-            double dt = (this->model->GetWorld()->RealTime() - prevTime).Double();
-            //std::cout << "Delta t = "<<dt <<std::endl;
-            prevTime = this->model->GetWorld()->RealTime();
+            double dt = (this->model->GetWorld()->SimTime() - prevTime).Double();
+            std::cout << "Delta t = "<<dt <<std::endl;
+            prevTime = this->model->GetWorld()->SimTime();
             ignition::math::Vector3d repulsion_velocity = (repulsion_force/mass)*dt;
             //std::cout<< name <<" repulsion velocity: "<< repulsion_velocity << "\n";
-            ignition::math::Vector3d maxVelocity = 100*(final_position-actual_position).Normalize();
-            ignition::math::Vector3d newVelocity = repulsion_velocity.Length() > maxVelocity.Length() ? maxVelocity : repulsion_velocity ;
+            ignition::math::Vector3d maxVelocity = MAX_VELOCITY*(final_position-actual_position).Normalize();
+            //maxVelocity.X(maxVelocity.X()*200);
+            //maxVelocity.Y(maxVelocity.Y()*200);
+            ignition::math::Vector3d newVelocity;
+            if (vai_easy){
+                newVelocity=maxVelocity;
+            }else{
+                newVelocity = repulsion_velocity ;
+                //ignition::math::Vector3d newVelocity = repulsion_velocity.Length() > maxVelocity.Length() ? maxVelocity : repulsion_velocity ;
+            }
             //std::cout<< name <<" new velocity: "<< newVelocity << "\n";
 
             if(CA)
@@ -233,7 +263,34 @@ public:
         }
         else
         {
+            if (stopped) {
+                stopped = false;
+                myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
+                execution_time = this->model->GetWorld()->SimTime() - execution_time;
+                myFile<<"Tempo di esecuzione: "<< execution_time.Double()<<std::endl<<"_________________________________"<<std::endl;
+                myFile.close();
+                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+            }
             this->model->SetLinearVel(final_position*0);
+            // if (swap){
+            //     srand (time(NULL));
+            //     int rCirconferenza = 5;
+            //     float alpha = (std::rand() % 360)*M_PI/180;
+            //     //std::cout<<name<<" angolo "<< alpha << "\n "<< "X: "<<rCirconferenza*std::cos(alpha)<<"\nY: "<<rCirconferenza*std::sin(alpha)<<std::endl; 
+            //     final_position.X(rCirconferenza*std::cos(alpha));
+            //     final_position.Y(rCirconferenza*std::sin(alpha));
+            //     final_position.Z(5);
+            //     //std::cout<<name <<" final position: "<< final_position<<std::endl;
+            //     swap=false;
+            // }else
+            // {
+            //     final_position.X(0);
+            //     final_position.Y(0);
+            //     final_position.Z(5);
+            //     //std::cout<<name <<" final position: "<< final_position<<std::endl;
+            //     swap=true;
+            // }
+            
             //myFile.close();
         }
         
@@ -250,5 +307,5 @@ private:
 };
 
 // Register this plugin with the simulator
-GZ_REGISTER_MODEL_PLUGIN(APFB)
+GZ_REGISTER_MODEL_PLUGIN(BAPF)
 } // namespace gazebo
