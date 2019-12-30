@@ -24,7 +24,8 @@ def main(argv):
     modelName= 'drone'
     worldName= 'world'
     worldFileName= 'world_template.world'
-    
+    numTest =1
+    radius = 5
     #Read the parameters
     try:
         opts, argv = getopt.getopt(argv, "hn:a:t:",["number=","algorithm=","test="])
@@ -52,7 +53,7 @@ def main(argv):
                 print("Invalid Argument. Using default algorithm (ORCA)")
         elif opt in ("-t","--test"):
             numTest = int(arg)
-            print(numTest)
+            
             if numTest != 1 and numTest != 2 :
                 numTest = 1
     print("Il numero di droni da creare e': "+str(numCopies)+'\n')
@@ -95,10 +96,10 @@ def main(argv):
             if templatePose in line:
                 if(numTest == 1):
                    num = (numCopies-i)*2
-                   newSdfFile.write(line.replace(templatePose, (str(num) +' 0 1')))
+                   newSdfFile.write(line.replace(templatePose, (str(num) +' 0 10')))
                 elif numTest == 2:
                    alpha = (((360/(numCopies+1))*i)* math.pi/180)+180
-                   newSdfFile.write(line.replace(templatePose, (str(alpha) +' 0 1')))
+                   newSdfFile.write(line.replace(templatePose, (str(radius*math.cos(alpha)) +' '+str(radius*math.sin(alpha))+' 1')))
             elif templateIP in line:
                 newSdfFile.write(line.replace(templateIP, '127.0.0.'+str(i)))
             elif templateAlgorithm in line:
@@ -122,7 +123,7 @@ def main(argv):
             models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str((i-1)*2)+" 0 1 0 0 0</pose>\n\t\t</include>\n"
         else:
             alpha = (((360/numCopies+1)*i)* math.pi/180)            
-            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str(alpha)+" 0 1 0 0 0</pose>\n\t\t</include>\n"
+            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str(radius*math.cos(alpha))+" "+str(radius*math.sin(alpha))+" 1 0 0 0</pose>\n\t\t</include>\n"
         
     
     for line in worldFile:
