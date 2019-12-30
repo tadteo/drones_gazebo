@@ -218,7 +218,7 @@
                 <xyz>0 0 1</xyz>
             </axis>
         </joint>
-        <!-- Plugins zone -->
+        <!-- Plugins zone-->
         <plugin name="CollisionAvoidance" filename="{$modelAlgorithm}">
             <final_position>{$modelPose}</final_position>
         </plugin>

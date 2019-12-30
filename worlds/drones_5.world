@@ -11,27 +11,27 @@
         		<include>
 			<name>drone_1</name>
 			<uri>model://drone_1</uri>
-			<pose>0 0 2 0 0 0</pose>
+			<pose>1.27409035396 0 1 0 0 0</pose>
 		</include>
 		<include>
 			<name>drone_2</name>
 			<uri>model://drone_2</uri>
-			<pose>2 0 2 0 0 0</pose>
+			<pose>2.54818070791 0 1 0 0 0</pose>
 		</include>
 		<include>
 			<name>drone_3</name>
 			<uri>model://drone_3</uri>
-			<pose>4 0 2 0 0 0</pose>
+			<pose>3.82227106187 0 1 0 0 0</pose>
 		</include>
 		<include>
 			<name>drone_4</name>
 			<uri>model://drone_4</uri>
-			<pose>6 0 2 0 0 0</pose>
+			<pose>5.09636141582 0 1 0 0 0</pose>
 		</include>
 		<include>
 			<name>drone_5</name>
 			<uri>model://drone_5</uri>
-			<pose>8 0 2 0 0 0</pose>
+			<pose>6.37045176978 0 1 0 0 0</pose>
 		</include>
 
     </world>

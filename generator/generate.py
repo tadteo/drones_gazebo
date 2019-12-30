@@ -4,7 +4,7 @@ import sys,getopt
 import fileinput
 import shutil
 import re
-
+import math
 
 #CREATION OF THE DRONE MODELS
 def main(argv):
@@ -27,7 +27,7 @@ def main(argv):
     
     #Read the parameters
     try:
-        opts, argv = getopt.getopt(argv, "hn:a:",["number=","algorithm="])
+        opts, argv = getopt.getopt(argv, "hn:a:t:",["number=","algorithm=","test="])
     except  getopt.GetoptError:
         print("generate.py -n <number_of_drones> -a <collision_avoidance_algorithm> \n")
         sys.exit(2)
@@ -50,10 +50,16 @@ def main(argv):
                 CAalgorithm = "libboid.so"
             else:
                 print("Invalid Argument. Using default algorithm (ORCA)")
+        elif opt in ("-t","--test"):
+            numTest = int(arg)
+            print(numTest)
+            if numTest != 1 and numTest != 2 :
+                numTest = 1
     print("Il numero di droni da creare e': "+str(numCopies)+'\n')
     print("La libreria di collision avoidance utilizzata e': "+CAalgorithm+"\n")
-
-    #Remove old files 
+    print("Il test case e' il test "+str(numTest)+'\n')
+    
+    #Remove old files
     files = os.listdir(copyDir)
     for x in files:
         if (re.match("drone_.+",x)):
@@ -71,7 +77,7 @@ def main(argv):
 
     confFile = open(os.path.join(templateDir,confFileName),'r')
     sdfFile = open(os.path.join(templateDir,sdfFileName),'r')
-
+    alpha= 0
     #Create new drones
     for i in range(1,numCopies+1):
         newModelName = modelName+"_"+str(i)
@@ -87,8 +93,12 @@ def main(argv):
         newSdfFile = open(os.path.join(newDir,sdfFileName),'w')
         for line in sdfFile:
             if templatePose in line:
-                num = (numCopies-i)*2
-                newSdfFile.write(line.replace(templatePose, (str(num) +' 0 5')))
+                if(numTest == 1):
+                   num = (numCopies-i)*2
+                   newSdfFile.write(line.replace(templatePose, (str(num) +' 0 1')))
+                elif numTest == 2:
+                   alpha = (((360/(numCopies+1))*i)* math.pi/180)+180
+                   newSdfFile.write(line.replace(templatePose, (str(alpha) +' 0 1')))
             elif templateIP in line:
                 newSdfFile.write(line.replace(templateIP, '127.0.0.'+str(i)))
             elif templateAlgorithm in line:
@@ -108,7 +118,12 @@ def main(argv):
     newWorldFile = open(os.path.join(worldsDir,newWorldName),'w')
     models=""
     for i in range(1,numCopies+1):
-            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str((i-1)*2)+" 0 2 0 0 0</pose>\n\t\t</include>\n"
+        if numTest==1 :
+            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str((i-1)*2)+" 0 1 0 0 0</pose>\n\t\t</include>\n"
+        else:
+            alpha = (((360/numCopies+1)*i)* math.pi/180)            
+            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str(alpha)+" 0 1 0 0 0</pose>\n\t\t</include>\n"
+        
     
     for line in worldFile:
         if templateWorldModels in line:

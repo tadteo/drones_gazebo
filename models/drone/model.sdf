@@ -196,10 +196,10 @@
             </axis>
         </joint>
 
-        <!-- Plugin space -->
+        <!-- Plugin space
         <plugin name="upforce" filename="libUpForce.so">
             <final_position>10 10 10</final_position>
         </plugin>
-        <plugin name="DroneCS" filename="libDroneCS2.so"/>
+        <plugin name="DroneCS" filename="libDroneCS2.so"/>-->
     </model>
 </sdf>
