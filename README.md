@@ -1,9 +1,9 @@
 # DRONES_GAZEBO
 An autonomous system systems of drones collision avoidance implementations
 ## Requirements
-Install Gazebo 9 as described in http://gazebosim.org/tutorials?tut=install_ubuntu
-Clone this project on your pc
-Export the following variable needed for Gazebo copying the following in your .bashrc
+Install Gazebo 9 as described in http://gazebosim.org/tutorials?tut=install_ubuntu  
+Clone this project on your pc  
+Export the following variable needed for Gazebo copying the following in your .bashrc  
 ```
 source /usr/share/gazebo/setup.sh
 
