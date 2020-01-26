@@ -1,5 +1,7 @@
 # DRONES_GAZEBO
-An autonomous system systems of drones collision avoidance implementations
+An implementation of different collision avoidance algorithms for UAVs for Gazebo
+
+
 ## Requirements
 Install Gazebo 9 as described in http://gazebosim.org/tutorials?tut=install_ubuntu  
 Clone this project on your pc  
