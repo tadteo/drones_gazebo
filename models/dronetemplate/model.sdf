@@ -27,7 +27,7 @@
             <visual name='visual'>
                 <geometry>
                     <mesh>
-                        <uri>model://drone/drone_base.dae</uri>
+                        <uri>model://drone/meshes/drone_base.dae</uri>
                         <scale>0.033 0.033 0.033</scale>
                     </mesh>
                     
@@ -70,7 +70,7 @@
                         <length>.02</length>
                     </cylinder> -->
                     <mesh>
-                        <uri>model://drone/elica.obj</uri>
+                        <uri>model://drone/meshes/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
                     </mesh>
                 </geometry>
@@ -105,7 +105,7 @@
                         <length>.02</length>
                     </cylinder> -->
                     <mesh>
-                        <uri>model://drone/elica.obj</uri>
+                        <uri>model://drone/meshes/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
                     </mesh>
                 </geometry>
@@ -140,7 +140,7 @@
                         <length>.02</length>
                     </cylinder> -->
                     <mesh>
-                        <uri>model://drone/elica.obj</uri>
+                        <uri>model://drone/meshes/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
                     </mesh>
                 </geometry>
@@ -175,7 +175,7 @@
                         <length>.02</length>
                     </cylinder> -->
                     <mesh>
-                        <uri>model://drone/elica.obj</uri>
+                        <uri>model://drone/meshes/elica.obj</uri>
                         <scale>0.025 0.025 0.025</scale>
                     </mesh>
                 </geometry>

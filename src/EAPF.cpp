@@ -222,7 +222,7 @@ public:
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
                 double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
 
-                std::cout<<(radius/d)<<"\n";
+                //std::cout<<(radius/d)<<"\n";
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
                 repulsion_force += (100*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();

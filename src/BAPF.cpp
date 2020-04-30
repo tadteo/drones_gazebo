@@ -222,24 +222,24 @@ public:
             bool vai_easy=false;
             if(agents.empty())
                 vai_easy=true;
-
+	    int radius=5;
             while(!agents.empty()){
                 auto agent = agents.back();
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
+		//float r3 = 0.1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.5-0.1)));
                 double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-                repulsion_force += (500*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
+                repulsion_force += (500*(mass*mass)/(d*d))*(me_position-agent_position);
                 agents.pop_back();
             }
             double d = me_position.Distance(final_position);
-            ignition::math::Vector3d attractive_force = -(k*(mass*2000)/(d*d))*(me_position-final_position).Normalize();
+            ignition::math::Vector3d attractive_force = -(k*(mass*2000)/(d*d))*(me_position-final_position);
             repulsion_force += attractive_force;
             // 3 - UPDATE  
 
             // Time delta
             //std::cout<< name <<" repulsion force: "<< repulsion_force << "\n";
             double dt = (this->model->GetWorld()->SimTime() - prevTime).Double();
-            std::cout << "Delta t = "<<dt <<std::endl;
             prevTime = this->model->GetWorld()->SimTime();
             ignition::math::Vector3d repulsion_velocity = (repulsion_force/mass)*dt;
             //std::cout<< name <<" repulsion velocity: "<< repulsion_velocity << "\n";
