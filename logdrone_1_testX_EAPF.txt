@@ -1,0 +1,21 @@
+Traiettoria originiale: 12.0416
+Traiettoria originiale: 12.0416
+Traiettoria originiale: 12.0416
+Traiettoria originiale: 12.0416
+Traiettoria originiale: 78.5175
+Traiettoria originiale: 78.5175
+Traiettoria originiale: 78.5175
+Traiettoria originiale: 9.96917
+Final trajectory: 15.7163
+Tempo di esecuzione: 2.553
+Traiettoria originiale: 9.96917
+Final trajectory: 15.845
+Tempo di esecuzione: 1.053
+Traiettoria originiale: 78.5175
+Traiettoria originiale: 78.5175
+Final trajectory: 79.0914
+Tempo di esecuzione: 7.833
+Traiettoria originiale: 5.09902
+Traiettoria originiale: 5.09902
+Traiettoria originiale: 5.09902
+Traiettoria originiale: 5.09902

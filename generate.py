@@ -12,13 +12,14 @@ def main(argv):
     numCopies = 5
     CAalgorithm = 'libCollisionAvoidance.so'
 
-    templateDir = './../models/dronetemplate'
-    copyDir = './../models/'
-    worldsDir = './../worlds/'
+    templateDir = './models/dronetemplate'
+    copyDir = './models/'
+    worldsDir = './worlds/'
     templateModelName = '{$modelName}'
     templatePose = '{$modelPose}'
     templateIP = '{$modelIP}'
     templateAlgorithm = '{$modelAlgorithm}'
+    templateTest = '{$modelTest}'
     templateWorldModels = '{$models}'
     templateWorldName = '{$worldName}'
     modelName= 'drone'
@@ -42,19 +43,22 @@ def main(argv):
             numCopies=int(arg)
         elif opt in ("-a","--algorithm"):
             if (arg == 'ORCA'):
-                CAalgorithm= 'libCollisionAvoidance.so'
+                CAalgorithm= "ORCA" # 
+                # CAalgorithm='libCollisionAvoidance.so'
             elif (arg == 'BAPF'):
-                CAalgorithm= 'libBAPF.so'
+                CAalgorithm=  "BAPF" #
+                # CAalgorithm='libBAPF.so'
             elif (arg == 'EAPF'):
-                CAalgorithm = "libEAPF.so"
+                CAalgorithm = "EAPF" # 
+                # CAalgorithm="libEAPF.so"
             elif (arg == 'boid'):
-                CAalgorithm = "libboid.so"
+                CAalgorithm = "BOID" "libboid.so"
             else:
                 print("Invalid Argument. Using default algorithm (ORCA)")
         elif opt in ("-t","--test"):
             numTest = int(arg)
             
-            if numTest != 1 and numTest != 2 :
+            if numTest != 1 and numTest != 2 and numTest != 3:
                 numTest = 1
     print("Il numero di droni da creare e': "+str(numCopies)+'\n')
     print("La libreria di collision avoidance utilizzata e': "+CAalgorithm+"\n")
@@ -91,6 +95,7 @@ def main(argv):
         newConfFile.close()
         confFile.seek(0,0)
 
+        #modify the template file with the correct names
         newSdfFile = open(os.path.join(newDir,sdfFileName),'w')
         for line in sdfFile:
             if templatePose in line:
@@ -104,6 +109,8 @@ def main(argv):
                 newSdfFile.write(line.replace(templateIP, '127.0.0.'+str(i)))
             elif templateAlgorithm in line:
                 newSdfFile.write(line.replace(templateAlgorithm, CAalgorithm ))
+            elif templateTest in line:
+                newSdfFile.write(line.replace(templateTest, str(numTest) ))
             else:
                 newSdfFile.write(line.replace(templateModelName,newModelName))
         newSdfFile.close()

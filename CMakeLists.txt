@@ -28,8 +28,10 @@ add_library(CollisionAvoidance SHARED src/collision_avoidance/CollisionAvoidance
 add_library(BAPF SHARED src/collision_avoidance/BAPF.cpp)
 add_library(EAPF SHARED src/collision_avoidance/EAPF.cpp)
 add_library(boid SHARED src/collision_avoidance/boid.cpp)
+add_library(CA   SHARED src/collision_avoidance/CA.cpp)
 
 target_link_libraries(CollisionAvoidance DroneC DroneS ORCA) #Love this line of code so much! <3
 target_link_libraries(BAPF DroneC DroneS )
 target_link_libraries(EAPF DroneC DroneS )
 target_link_libraries(boid DroneC DroneS )
+target_link_libraries(CA   DroneC DroneS ORCA )

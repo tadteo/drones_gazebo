@@ -48,7 +48,7 @@ Message* server_receive(int socketfd)
 	int n; 	
 	Message *buffer=(Message *)malloc(MESSAGE_SIZE); 
 
-	n = recvfrom(socketfd, buffer, MESSAGE_SIZE,  0, NULL, NULL);
+	n = recvfrom(socketfd, buffer, MESSAGE_SIZE,  MSG_DONTWAIT, NULL, NULL);
 	if (n== MESSAGE_SIZE)
 	{
 

@@ -103,10 +103,7 @@ public:
         n = std::stoi(name.substr(6));
 
         std::string world_name = this->model->GetWorld()->Name();
-        //std::cout<<"World name = "<<world_name<<std::endl;
         TotalNumberDrones = std::stoi(world_name.substr(6));
-        //std::cout<<"Total Number of Drones: "<<TotalNumberDrones<<std::endl;
-
 
         //initialize vectors of agents and agents_pntr
         agents.resize(TotalNumberDrones);

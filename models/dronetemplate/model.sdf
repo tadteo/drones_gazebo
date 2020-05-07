@@ -219,8 +219,13 @@
             </axis>
         </joint>
         <!-- Plugins zone-->
-        <plugin name="CollisionAvoidance" filename="{$modelAlgorithm}">
+        <!-- <plugin name="CollisionAvoidance" filename="{$modelAlgorithm}">
             <final_position>{$modelPose}</final_position>
+        </plugin>
+         --><plugin name="CollisionAvoidance" filename="libCA.so">
+            <final_position>{$modelPose}</final_position>
+            <algorithm>{$modelAlgorithm}</algorithm>
+            <test>{$modelTest}</test>
         </plugin>
     </model>
 </sdf>

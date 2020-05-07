@@ -1,0 +1,14 @@
+Traiettoria originiale: 54.7449
+Traiettoria originiale: 54.7449
+Traiettoria originiale: 54.7449
+Traiettoria originiale: 9.96917
+Final trajectory: 15.5064
+Tempo di esecuzione: 3.28
+Traiettoria originiale: 9.96917
+Final trajectory: 18.5781
+Tempo di esecuzione: 1.396
+Traiettoria originiale: 54.7449
+Traiettoria originiale: 54.7449
+Final trajectory: 66.393
+Tempo di esecuzione: 5.459
+Traiettoria originiale: 5.09902
