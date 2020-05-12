@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+    <world name="world_20">
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+        <include>
+            <uri>model://sun</uri>
+        </include>
+        <!-- Drones -->
+        		<include>
+			<name>drone_1</name>
+			<uri>model://drone_1</uri>
+			<pose>4.75528258148 1.54508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_2</name>
+			<uri>model://drone_2</uri>
+			<pose>4.04508497187 2.93892626146 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_3</name>
+			<uri>model://drone_3</uri>
+			<pose>2.93892626146 4.04508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_4</name>
+			<uri>model://drone_4</uri>
+			<pose>1.54508497187 4.75528258148 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_5</name>
+			<uri>model://drone_5</uri>
+			<pose>3.06161699787e-16 5.0 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_6</name>
+			<uri>model://drone_6</uri>
+			<pose>-1.54508497187 4.75528258148 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_7</name>
+			<uri>model://drone_7</uri>
+			<pose>-2.93892626146 4.04508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_8</name>
+			<uri>model://drone_8</uri>
+			<pose>-4.04508497187 2.93892626146 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_9</name>
+			<uri>model://drone_9</uri>
+			<pose>-4.75528258148 1.54508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_10</name>
+			<uri>model://drone_10</uri>
+			<pose>-5.0 6.12323399574e-16 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_11</name>
+			<uri>model://drone_11</uri>
+			<pose>-4.75528258148 -1.54508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_12</name>
+			<uri>model://drone_12</uri>
+			<pose>-4.04508497187 -2.93892626146 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_13</name>
+			<uri>model://drone_13</uri>
+			<pose>-2.93892626146 -4.04508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_14</name>
+			<uri>model://drone_14</uri>
+			<pose>-1.54508497187 -4.75528258148 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_15</name>
+			<uri>model://drone_15</uri>
+			<pose>-9.18485099361e-16 -5.0 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_16</name>
+			<uri>model://drone_16</uri>
+			<pose>1.54508497187 -4.75528258148 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_17</name>
+			<uri>model://drone_17</uri>
+			<pose>2.93892626146 -4.04508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_18</name>
+			<uri>model://drone_18</uri>
+			<pose>4.04508497187 -2.93892626146 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_19</name>
+			<uri>model://drone_19</uri>
+			<pose>4.75528258148 -1.54508497187 1 0 0 0</pose>
+		</include>
+		<include>
+			<name>drone_20</name>
+			<uri>model://drone_20</uri>
+			<pose>5.0 -1.22464679915e-15 1 0 0 0</pose>
+		</include>
+
+    </world>
+</sdf>

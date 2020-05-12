@@ -104,7 +104,7 @@ def main(argv):
                    newSdfFile.write(line.replace(templatePose, (str(num) +' 0 10')))
                 elif numTest == 2:
                    alpha = (((360/(numCopies-1))*(i-1))* math.pi/180)+math.pi
-                   newSdfFile.write(line.replace(templatePose, (str(radius*math.cos(alpha)) +' '+str(radius*math.sin(alpha))+' 1')))
+                   newSdfFile.write(line.replace(templatePose, (str(radius*math.cos(alpha)) +' '+str(radius*math.sin(alpha))+' 5')))
             elif templateIP in line:
                 newSdfFile.write(line.replace(templateIP, '127.0.0.'+str(i)))
             elif templateAlgorithm in line:

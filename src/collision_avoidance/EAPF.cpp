@@ -224,11 +224,11 @@ public:
 
                 //std::cout<<(radius/d)<<"\n";
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-                repulsion_force += (100*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
+                repulsion_force += (k1*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();
             }
             double d = me_position.Distance(final_position);
-            ignition::math::Vector3d attractive_force = -(k*(mass*1000)/(d*d))*(me_position-final_position).Normalize();
+            ignition::math::Vector3d attractive_force = -(k2*(mass*1000)/(d*d))*(me_position-final_position).Normalize();
             repulsion_force += attractive_force;
             // 3 - UPDATE  
 

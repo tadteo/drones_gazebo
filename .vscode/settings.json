@@ -61,6 +61,12 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "typeinfo": "cpp"
-    }
+        "typeinfo": "cpp",
+        "strstream": "cpp",
+        "cfenv": "cpp"
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/matteo/RL_AEP_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ]
 }

@@ -229,11 +229,11 @@ public:
 		//float r3 = 0.1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.5-0.1)));
                 double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
                 //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-                repulsion_force += (500*(mass*mass)/(d*d))*(me_position-agent_position);
+                repulsion_force += (k1*(mass*mass)/(d*d))*(me_position-agent_position);
                 agents.pop_back();
             }
             double d = me_position.Distance(final_position);
-            ignition::math::Vector3d attractive_force = -(k*(mass*2000)/(d*d))*(me_position-final_position);
+            ignition::math::Vector3d attractive_force = -(k2*(mass*2000)/(d*d))*(me_position-final_position);
             repulsion_force += attractive_force;
             // 3 - UPDATE  
 

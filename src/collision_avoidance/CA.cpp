@@ -28,6 +28,9 @@
 //for logging
 #include <iostream>
 #include <fstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 namespace gazebo
 {
@@ -62,7 +65,7 @@ namespace gazebo
         double actual_trajectory = 0;
         std::ofstream myFile;
         common::Time execution_time =0;
-
+        std::string algor;
 
         void send_to_all(Message *m, int amount)
         {
@@ -101,8 +104,24 @@ namespace gazebo
                 		    agents_[(m->src) - 1].velocity_[1] = m->vy;
                 		    agents_[(m->src) - 1].velocity_[2] = m->vz;
                 		    sec5[(m->src) - 1] = m->id;
-                	}else{
-                		ignition::math::Vector3d positionReceived( m->x, m->y, m->z );
+                	}else if(al == algo::BAPF){
+                		ignition::math::Vector3d positionReceived( m->x , m->y , m->z );
+                        double distance = actual_position.Distance(positionReceived);
+                        if( distance <= radius){
+                            Neighbour tmp;
+                            tmp.id_ = m->src;
+                            tmp.x = positionReceived.X();
+                            tmp.y = positionReceived.Y();
+                            tmp.z = positionReceived.Z();
+                            tmp.vx = m->vx;
+                            tmp.vy = m->vy;
+                            tmp.vz = m->vz;
+                            sec5[(m->src) - 1] = m->id;
+                            agents.push_back(tmp);
+                            //std::cout<<"Pushed back "<< tmp.id_<<std::endl;
+                }
+                	}else if(al == algo::EAPF){
+                        ignition::math::Vector3d positionReceived( m->x, m->y, m->z );
                 		double distance = actual_position.Distance(positionReceived);
                 		Neighbour tmp;
                 		tmp.id_ = m->src;
@@ -114,7 +133,7 @@ namespace gazebo
                 		tmp.vz = m->vz;
                 		sec5[(m->src) - 1] = m->id;
                 		agents.push_back(tmp);
-                	}                
+                    }            
                 }
             }
         }
@@ -129,7 +148,7 @@ namespace gazebo
             else
                 final_position = ignition::math::Vector3d(0, 0, 0);
             if (_sdf->HasElement("algorithm")){
-            	std::string algor = _sdf->Get<std::string>("algorithm");
+            	algor = _sdf->Get<std::string>("algorithm");
             	if(algor == "ORCA"){
             		al = algo::ORCA;
             	} else if (algor=="BAPF")
@@ -199,22 +218,38 @@ namespace gazebo
             tStart = clock();
 
             //per il logging
-            std::string file = "./log" + name + "_testX_EAPF.txt";
-            myFile.open(file, std::ios::app);
+            int status;
+            std::string command = "mkdir -p /home/matteo/test_paper/"+world_name+"_test_"+ std::to_string(test)+ "_algo_"+algor+"/";
+            status = std::system(command.c_str()); // Creating a directory
+            if (status == -1)
+                std::cerr << "Error : " << strerror(errno) << std::endl;
+            else
+                std::cout << "Directories are created" << std::endl;
+            std::string file = "/home/matteo/test_paper/"+world_name+"_test_"+ std::to_string(test)+ "_algo_"+algor+"/log_" + name + ".txt";
+            myFile.open(file, std::ios::out);
         }
 
         // Called by the world update start event
     public:
         void OnUpdate()
         {
+        	execution_time = this->model->GetWorld()->SimTime();
+            
+
             if (first)
             {
                 first = false;
                 actual_position = this->model->WorldPose().Pos();
-                myFile << "Traiettoria originiale: " << actual_position.Distance(final_position) << std::endl;
-                execution_time = this->model->GetWorld()->SimTime();
+                myFile << std::abs(actual_position.Distance(final_position)) << std::endl;
+                prev_position = this->model->WorldPose().Pos();
             }
-            if (actual_position.Distance(final_position) > 0.5)
+
+            //Calcolo il delta spazio ad ogni delta t e li sommo
+            double ds = (std::abs(this->model->WorldPose().Pos().Distance(prev_position)));
+            actual_trajectory += ds;
+            prev_position = this->model->WorldPose().Pos();
+
+            if (actual_position.Distance(final_position) > 0.005 && execution_time.Double() < 2*n )
             {
 
                 // 0.0 - UPDATE MY POS and VEL
@@ -234,14 +269,6 @@ namespace gazebo
                     me.z = pose.Pos().Z();
                 }
 
-
-
-                //Calcolo il delta spazio ad ogni delta t e li sommo
-                double ds = (actual_position.Distance(prev_position));
-                actual_trajectory += ds;
-                //std::cout << "Delta spazio = "<<ds <<std::endl;
-                prev_position = actual_position;
-
                 //syncronization for start
                 bool go = true;
                 for (int i = 0; i < TotalNumberDrones; i++)
@@ -253,7 +280,7 @@ namespace gazebo
                 ignition::math::Vector3d velocity;
                 if (go)
                 {
-                    velocity = (final_position - actual_position).Normalize() * 50;
+                    velocity = (final_position - actual_position).Normalize() * MAX_VELOCITY;
                     
                     if(al != algo::ORCA)
                     {
@@ -348,11 +375,11 @@ namespace gazebo
 	                        //float r3 = 0.1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.5-0.1)));
 	                        double d = me_position.Distance(agent_position); //aggiungere raggio del drone
 	                        //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-	                        repulsion_force += (500 * (mass * mass) / (d * d)) * (me_position - agent_position);
+	                        repulsion_force += (k1 * (mass * mass) / (d * d)) * (me_position - agent_position);
 	                        agents.pop_back();
 	                    }
 	                    double d = me_position.Distance(final_position);
-	                    ignition::math::Vector3d attractive_force = -(k * (mass * 2000) / (d * d)) * (me_position - final_position);
+	                    ignition::math::Vector3d attractive_force = -(k2 / (d * d)) * (me_position - final_position);
 	                    repulsion_force += attractive_force;
 	                    // 3 - UPDATE
 
@@ -391,11 +418,12 @@ namespace gazebo
 
 	                        //std::cout<<(radius/d)<<"\n";
 	                        //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
-	                        repulsion_force += (100 * (mass * mass) / (d * d)) * (me_position - agent_position).Normalize();
+	                        repulsion_force += (k1 * (mass * mass) / (d * d)) * (me_position - agent_position).Normalize();
 	                        agents.pop_back();
 	                    }
 	                    double d = me_position.Distance(final_position);
-	                    ignition::math::Vector3d attractive_force = -(k * (mass * 1000) / (d * d)) * (me_position - final_position).Normalize();
+	                    // ignition::math::Vector3d attractive_force = -(k * (mass * 1000) / (d * d)) * (me_position - final_position).Normalize();
+	                    ignition::math::Vector3d attractive_force = -k2 * (me_position - final_position).Normalize();
 	                    repulsion_force += attractive_force;
 	                    // 3 - UPDATE
 
@@ -426,40 +454,43 @@ namespace gazebo
             else
             {
             	if(test == 3){
-            		struct timespec ts;
-        		    clock_gettime(CLOCK_MONOTONIC, &ts);
-
-        		    /* using nano-seconds instead of seconds */
-        		    srand((time_t)ts.tv_nsec);
-            		int rCirconferenza = (std::rand() % 10);
-            		float theta = (std::rand() % 360)*M_PI/180;
-            		float gamma = (std::rand() % 360)*M_PI/180;
-            		final_position.X(rCirconferenza*std::sin(theta)*std::sin(gamma));
-            		final_position.Y(rCirconferenza*std::cos(theta));
-            		final_position.Z(10+(rCirconferenza*std::sin(theta)*std::cos(gamma)));
-
-            		if (execution_time.Double() >200)
+            		if (execution_time.Double() < MAX_TIME)
             		{
+                        
+		        		struct timespec ts;
+		    		    clock_gettime(CLOCK_MONOTONIC, &ts);
+
+		    		    /* using nano-seconds instead of seconds */
+		    		    srand((time_t)ts.tv_nsec);
+		        		int rCirconferenza = (std::rand() % 10);
+		        		float theta = (std::rand() % 360)*M_PI/180;
+		        		float gamma = (std::rand() % 360)*M_PI/180;
+		        		final_position.X(rCirconferenza*std::sin(theta)*std::sin(gamma));
+		        		final_position.Y(rCirconferenza*std::cos(theta));
+		        		final_position.Z(10+(rCirconferenza*std::sin(theta)*std::cos(gamma)));
+		        	}
+            		else{
             		    stopped = false;
-            		    myFile << "Final trajectory: " << actual_trajectory << std::endl;
-            		    execution_time = this->model->GetWorld()->SimTime() - execution_time;
-            		    myFile << "Tempo di esecuzione: " << execution_time.Double() << std::endl;
+            		    myFile << actual_trajectory << std::endl;
+            		    myFile << execution_time.Double() << std::endl;
             		    myFile.close();
-            		    std::cout << "Drone " << name << " arrivato!" << std::endl;
+            		    std::cout << "Fine esecuzione: " << name << " arrivato!" << std::endl;
+            		    this->model->SetLinearVel(final_position * 0);
+                        this->model->Fini();
+
             		}
-            		this->model->SetLinearVel(final_position * 0);
 
             	}else{
             		if (stopped)
             		{
             		    stopped = false;
-            		    myFile << "Final trajectory: " << actual_trajectory << std::endl;
-            		    execution_time = this->model->GetWorld()->SimTime() - execution_time;
-            		    myFile << "Tempo di esecuzione: " << execution_time.Double() << std::endl;
+            		    myFile << actual_trajectory << std::endl;
+            		    myFile << execution_time.Double() << std::endl;
             		    myFile.close();
             		    std::cout << "Drone " << name << " arrivato!" << std::endl;
             		}
             		this->model->SetLinearVel(final_position * 0);
+                    this->model->Fini();
             	}         
             }
         }
