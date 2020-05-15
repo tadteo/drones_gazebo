@@ -6,8 +6,9 @@ import shutil
 import re
 import math
 
-#CREATION OF THE DRONE MODELS
 def main(argv):
+    #loop for all test cases, all algorithms and the number of drones to collect the data daved from the simulation
+    
     for i in [1,2,3]: #Test cases
         for j in ["ORCA","BAPF","EAPF"]: #algorithms
             out_file = open("/home/matteo/test_paper/results_test_"+str(i)+"_algo_"+str(j)+".txt", "w+")
@@ -70,10 +71,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
-# For each simulation
-# Time of execution is the maximum time of execution 
-# 
-
-# Optimal trajectory dell' ultimo caso di test

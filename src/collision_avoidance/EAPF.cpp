@@ -41,7 +41,7 @@ class EAPF : public ModelPlugin
     clock_t tStart;
     gazebo::common::Time prevTime;
 
-    bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
+    bool  CA= true; //CollisionAvoidance (CA) if is active or not the collision avoidance
 
     //for the logging
     bool stopped = true;
@@ -130,14 +130,14 @@ public:
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
 
-        //per la sincronizzazione
+        //for sync
         for (int i = 0; i <= TotalNumberDrones; i++)
         {
             sec5.push_back(false);
         }
         tStart = clock();
 
-        //per il logging
+        //for logging
         std::string file = "./log"+name +"_testX_EAPF.txt";
         myFile.open(file,std::ios::app);
     }
@@ -164,10 +164,9 @@ public:
             me.z = pose.Pos().Z();
             
 
-            //Calcolo il delta spazio ad ogni delta t e li sommo
+            //Calculation of the delta space and add it for each time step
             double ds = (actual_position.Distance(prev_position));
             actual_trajectory += ds;
-            //std::cout << "Delta spazio = "<<ds <<std::endl;
             prev_position = actual_position;
 
             //syncronization for start
@@ -220,10 +219,8 @@ public:
             while(!agents.empty()){
                 auto agent = agents.back();
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
-                double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
+                double d = me_position.Distance(agent_position);
 
-                //std::cout<<(radius/d)<<"\n";
-                //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
                 repulsion_force += (k1*(mass*mass)/(d*d))*(me_position-agent_position).Normalize();
                 agents.pop_back();
             }
@@ -255,9 +252,9 @@ public:
                 stopped = false;
                 myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
                 execution_time = this->model->GetWorld()->SimTime() - execution_time;
-                myFile<<"Tempo di esecuzione: "<< execution_time.Double()<<std::endl;
+                myFile<<"Execution time: "<< execution_time.Double()<<std::endl;
                 myFile.close();
-                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+                std::cout << "Drone "<<name <<" arrived!"<<std::endl;
             }
             this->model->SetLinearVel(final_position*0);
         }

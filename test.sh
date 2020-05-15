@@ -16,9 +16,9 @@ do
             else
                 sleep 900
             fi
-            echo "Sto uccidendo il processo test: $i, algo: $j, droni: $k"
+            echo "I'm killing the process for the test: $i, algo: $j, drones: $k"
             kill -15 `pidof gzserver`
-            echo "Ucciso il processo test: $i, algo: $j, droni: $k"
+            echo "I've killed the process for test: $i, algo: $j, drones: $k"
         done
         sleep 10s
     done
@@ -32,7 +32,7 @@ do
         gzserver drones_$k.world >> /home/matteo/test_paper/collisions/collisions_${k}_${j}_3.txt &
         sleep `echo "($k*2+5)*60" | bc -l`
         kill -15 `pidof gzserver`
-        echo "Ucciso il processo test test: 3, algo: $j, droni: $k"
+        echo "I've killed the process for test: 3, algo: $j, drones: $k"
     done
     sleep 10s
 done

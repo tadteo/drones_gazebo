@@ -53,7 +53,7 @@ namespace gazebo
         clock_t tStart;
         gazebo::common::Time prevTime;
 
-        bool  CA_activated = true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
+        bool  CA_activated = true; //CollisionAvoidance (CA)
 
         bool swap = true;
         int test = 1;
@@ -211,14 +211,14 @@ namespace gazebo
             amount = TotalNumberDrones + 2;
             server_fd = server_init(7000 + n);
 
-            //per la sincronizzazione
+            //for sync
             for (int i = 0; i <= TotalNumberDrones; i++)
             {
                 sec5.push_back(false);
             }
             tStart = clock();
 
-            //per il logging
+            //for logging
             int status;
             std::string command = "mkdir -p /home/matteo/test_paper/"+world_name+"_test_"+ std::to_string(test)+ "_algo_"+algor+"/";
             status = std::system(command.c_str()); // Creating a directory
@@ -247,7 +247,6 @@ namespace gazebo
                 prev_position = this->model->WorldPose().Pos();
             }
 
-            //Calcolo il delta spazio ad ogni delta t e li sommo
             double ds = (std::abs(this->model->WorldPose().Pos().Distance(prev_position)));
             actual_trajectory += ds;
             prev_position = this->model->WorldPose().Pos();
@@ -258,7 +257,6 @@ namespace gazebo
                 // 0.0 - UPDATE MY POS and VEL
                 pose = this->model->WorldPose();
                 actual_position = pose.Pos();
-                //myFile<<pose.Pos().X()<<","<<pose.Pos().Y()<<","<<pose.Pos().Z()<<","<<n<<std::endl;
                 if(al == algo::ORCA)
                 {
                     agents_[n - 1].position_[0] = pose.Pos().X();
@@ -366,7 +364,7 @@ namespace gazebo
 	                    ignition::math::Vector3d me_position(me.x, me.y, me.z);
 	                    ignition::math::Vector3d me_velocity(me.vx, me.vy, me.vz);
 	                    ignition::math::Vector3d repulsion_force(0, 0, 0);
-	                    //Se non ho vicini vai alla massima velocita
+	                    //If I don't have neghbours i go to maximum velocity
 	                    bool vai_easy = false;
 	                    if(agents.empty())
 	                        vai_easy = true;
@@ -376,7 +374,7 @@ namespace gazebo
 	                        auto agent = agents.back();
 	                        ignition::math::Vector3d agent_position(agent.x, agent.y, agent.z);
 	                        //float r3 = 0.1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.5-0.1)));
-	                        double d = me_position.Distance(agent_position); //aggiungere raggio del drone
+	                        double d = me_position.Distance(agent_position);
 	                        //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
 	                        repulsion_force += (k1 * (mass * mass) / (d * d)) * (me_position - agent_position);
 	                        agents.pop_back();
@@ -417,15 +415,12 @@ namespace gazebo
 	                    {
 	                        auto agent = agents.back();
 	                        ignition::math::Vector3d agent_position(agent.x, agent.y, agent.z);
-	                        double d = me_position.Distance(agent_position); //aggiungere raggio del drone
-
+	                        double d = me_position.Distance(agent_position);
 	                        //std::cout<<(radius/d)<<"\n";
-	                        //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
 	                        repulsion_force += (k1 * (mass * mass) / (d * d)) * (me_position - agent_position).Normalize();
 	                        agents.pop_back();
 	                    }
 	                    double d = me_position.Distance(final_position);
-	                    // ignition::math::Vector3d attractive_force = -(k * (mass * 1000) / (d * d)) * (me_position - final_position).Normalize();
 	                    ignition::math::Vector3d attractive_force = -k2 * (me_position - final_position).Normalize();
 	                    repulsion_force += attractive_force;
 	                    // 3 - UPDATE
@@ -475,7 +470,7 @@ namespace gazebo
             		    myFile << actual_trajectory << std::endl;
             		    myFile << execution_time.Double() << std::endl;
             		    myFile.close();
-            		    std::cout << "Fine esecuzione: " << name << " arrivato!" << std::endl;
+            		    std::cout << "End execution: " << name << " arrived!" << std::endl;
             		    this->model->SetLinearVel(final_position * 0);
                         this->model->Fini();
 
@@ -488,7 +483,7 @@ namespace gazebo
             		    myFile << actual_trajectory << std::endl;
             		    myFile << execution_time.Double() << std::endl;
             		    myFile.close();
-            		    std::cout << "Drone " << name << " arrivato!" << std::endl;
+            		    std::cout << "Drone " << name << " arrived!" << std::endl;
             		}
             		this->model->SetLinearVel(final_position * 0);
                     this->model->Fini();

@@ -39,7 +39,7 @@ class BAPF : public ModelPlugin
     int n, amount, server_fd;
     
     clock_t tStart;
-    bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
+    bool  CA= true; //CollisionAvoidance (CA)
     bool swap = true;
     gazebo::common::Time prevTime;
 
@@ -132,14 +132,14 @@ public:
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
 
-        //per la sincronizzazione
+        //for sync
         for (int i = 0; i <= TotalNumberDrones; i++)
         {
             sec5.push_back(false);
         }
         tStart = clock();
         
-        //per il logging
+        //for logging
         std::string file = "./log/"+name +"_testX_BAPF.txt";
         myFile.open(file,std::ios::app);
     }
@@ -151,7 +151,7 @@ public:
         if (first){
             first = false;
             actual_position = this->model->WorldPose().Pos();
-            myFile<<"Traiettoria originiale: "<< actual_position.Distance(final_position) <<std::endl;
+            myFile<<"Original trajectory: "<< actual_position.Distance(final_position) <<std::endl;
             execution_time = this->model->GetWorld()->SimTime();
         }
         if (actual_position.Distance(final_position) > 0.3)
@@ -165,10 +165,9 @@ public:
             me.y = pose.Pos().Y();
             me.z = pose.Pos().Z();
 
-            //Calcolo il delta spazio ad ogni delta t e li sommo
+            //Calculate delta space for each time step
             double ds = (actual_position.Distance(prev_position));
             actual_trajectory += ds;
-            //std::cout << "Delta spazio = "<<ds <<std::endl;
             prev_position = actual_position;
             
             //syncronization for start
@@ -218,7 +217,7 @@ public:
             ignition::math::Vector3d me_position(me.x,me.y,me.z);
             ignition::math::Vector3d me_velocity(me.vx,me.vy,me.vz);
             ignition::math::Vector3d repulsion_force(0,0,0);
-            //Se non ho vicini vai alla massima velocita
+            //If I don't have neighbour go to max velocity
             bool vai_easy=false;
             if(agents.empty())
                 vai_easy=true;
@@ -226,9 +225,7 @@ public:
             while(!agents.empty()){
                 auto agent = agents.back();
                 ignition::math::Vector3d agent_position(agent.x,agent.y,agent.z);
-		//float r3 = 0.1 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.5-0.1)));
-                double d = me_position.Distance(agent_position); //aggiungere raggio del drone 
-                //repulsion_force += k*(radius/d)*(me_position-agent_position).Normalize();
+                double d = me_position.Distance(agent_position);
                 repulsion_force += (k1*(mass*mass)/(d*d))*(me_position-agent_position);
                 agents.pop_back();
             }
@@ -267,31 +264,11 @@ public:
                 stopped = false;
                 myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
                 execution_time = this->model->GetWorld()->SimTime() - execution_time;
-                myFile<<"Tempo di esecuzione: "<< execution_time.Double()<<std::endl<<"_________________________________"<<std::endl;
+                myFile<<"Execution time: "<< execution_time.Double()<<std::endl<<"_________________________________"<<std::endl;
                 myFile.close();
-                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+                std::cout << "Drone "<<name <<" arrived!"<<std::endl;
             }
             this->model->SetLinearVel(final_position*0);
-            // if (swap){
-            //     srand (time(NULL));
-            //     int rCirconferenza = 5;
-            //     float alpha = (std::rand() % 360)*M_PI/180;
-            //     //std::cout<<name<<" angolo "<< alpha << "\n "<< "X: "<<rCirconferenza*std::cos(alpha)<<"\nY: "<<rCirconferenza*std::sin(alpha)<<std::endl; 
-            //     final_position.X(rCirconferenza*std::cos(alpha));
-            //     final_position.Y(rCirconferenza*std::sin(alpha));
-            //     final_position.Z(5);
-            //     //std::cout<<name <<" final position: "<< final_position<<std::endl;
-            //     swap=false;
-            // }else
-            // {
-            //     final_position.X(0);
-            //     final_position.Y(0);
-            //     final_position.Z(5);
-            //     //std::cout<<name <<" final position: "<< final_position<<std::endl;
-            //     swap=true;
-            // }
-            
-            //myFile.close();
         }
         
         

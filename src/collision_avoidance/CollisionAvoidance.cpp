@@ -39,7 +39,7 @@ class CollisionAvoidance : public ModelPlugin
     int n, amount, server_fd;
     ORCA::KdTree tree;
     clock_t tStart;
-    bool  CA= true; //CollisionAvoidance (CA) se 1 il collision avoidance e' attivo se 0 non lo e'
+    bool  CA= true; //CollisionAvoidance (CA)
     bool stopped = true;
     bool first = true;
     double actual_trajectory =0;
@@ -132,11 +132,11 @@ public:
         //Setup of the Server
         amount = TotalNumberDrones + 2;
         server_fd = server_init(7000 + n);
-        //per il logging
+        //for logging
         std::string file = "./log/"+name +"_testX_ORCA.txt";
         myFile.open(file,std::ios::app);
 
-        //per la sincronizzazione
+        //for sync
         for (int i = 0; i <= TotalNumberDrones; i++)
         {
             sec5.push_back(false);
@@ -167,7 +167,6 @@ public:
             agents[n - 1].position_[1] = pose.Pos().Y();
             agents[n - 1].position_[2] = pose.Pos().Z();
 
-            //Calcolo il delta spazio ad ogni delta t e li sommo
             double ds = (actual_position.Distance(prev_position));
             actual_trajectory += ds;
             //std::cout << "Delta spazio = "<<ds <<std::endl;
@@ -242,9 +241,9 @@ public:
                 myFile<<"Final trajectory: "<< actual_trajectory<<std::endl;
                 execution_time = this->model->GetWorld()->SimTime() - execution_time;
                 
-                myFile<<"Tempo di esecuzione: "<< execution_time.Double() <<std::endl<<"____________________________________"<<std::endl;
+                myFile<<"Execution time: "<< execution_time.Double() <<std::endl<<"____________________________________"<<std::endl;
                 myFile.close();
-                std::cout << "Drone "<<name <<" arrivato!"<<std::endl;
+                std::cout << "Drone "<<name <<" arrived!"<<std::endl;
             }
             this->model->SetLinearVel(final_position*0);
             

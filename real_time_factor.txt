@@ -1,0 +1,9 @@
+The real time factor reached with the amount of number of drones used to made some calculation used in the sleep for the tes.sh
+Real time factor -> number of drones
+0    -> 100 
+0.05 -> 50
+0.07 -> 40
+0.09 -> 30
+0.19 -> 20
+0.60 -> 10
+0.98 -> 1
