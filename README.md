@@ -28,3 +28,6 @@ Run the simulation on gazebo with
 ```
 gazebo drones_<number of drones>.world
 ```
+
+## To pay attention
+Some of the path used for collecting data and calculate them are hard coded please change it in order to make the code working in your pc
