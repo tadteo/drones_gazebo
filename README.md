@@ -24,10 +24,18 @@ python generate.py -n <number_of_drones> -a <algorithm> -t <test>
 <algorithm>: ORCA / BAPF / EAPF
 <test>: 1 / 2 
 ```
-Run the simulation on gazebo with
+Run the simulation on gazebo with:
 ```
 gazebo drones_<number of drones>.world
 ```
+
+To run the same tests used in the paper:
+```
+chmod +x ./test.sh
+./test.sh
+```
+Pay attention all the tests can take a couple of day of execution with this settings. Big improvement as parallelization of the execution can be done.
+
 
 ## To pay attention
 Some of the path used for collecting data and calculate them are hard coded please change it in order to make the code working in your pc
