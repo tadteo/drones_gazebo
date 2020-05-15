@@ -5,7 +5,7 @@ import fileinput
 import shutil
 import re
 import math
-
+import random
 #CREATION OF THE DRONE MODELS
 def main(argv):
     
@@ -57,9 +57,9 @@ def main(argv):
                 print("Invalid Argument. Using default algorithm (ORCA)")
         elif opt in ("-t","--test"):
             numTest = int(arg)
-            
             if numTest != 1 and numTest != 2 and numTest != 3:
                 numTest = 1
+
     print("Il numero di droni da creare e': "+str(numCopies)+'\n')
     print("La libreria di collision avoidance utilizzata e': "+CAalgorithm+"\n")
     print("Il test case e' il test "+str(numTest)+'\n')
@@ -101,10 +101,14 @@ def main(argv):
             if templatePose in line:
                 if(numTest == 1):
                    num = (numCopies-i)*2
-                   newSdfFile.write(line.replace(templatePose, (str(num) +' 0 10')))
+                   newSdfFile.write(line.replace(templatePose, (str(num) +' 0 11')))
                 elif numTest == 2:
                    alpha = (((360/(numCopies-1))*(i-1))* math.pi/180)+math.pi
-                   newSdfFile.write(line.replace(templatePose, (str(radius*math.cos(alpha)) +' '+str(radius*math.sin(alpha))+' 5')))
+                   newSdfFile.write(line.replace(templatePose, (str(radius*math.cos(alpha)) +' '+str(radius*math.sin(alpha))+' 10')))
+                elif numTest == 3:
+                   theta = (random.randint(0,360))*math.pi/180
+                   gamma = (random.randint(0,360))*math.pi/180
+                   newSdfFile.write(line.replace(templatePose, ''+str(radius*math.sin(theta)*math.cos(gamma))+' '+str(radius*math.cos(alpha))+' '+str(15+radius*math.sin(theta)*math.cos(gamma))))
             elif templateIP in line:
                 newSdfFile.write(line.replace(templateIP, '127.0.0.'+str(i)))
             elif templateAlgorithm in line:
@@ -130,7 +134,7 @@ def main(argv):
             models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str((i-1)*2)+" 0 1 0 0 0</pose>\n\t\t</include>\n"
         else:
             alpha = i*((2*math.pi)/(numCopies))            
-            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str(radius*math.cos(alpha))+" "+str(radius*math.sin(alpha))+" 1 0 0 0</pose>\n\t\t</include>\n"
+            models+="\r\t\t<include>\n\t\t\t<name>drone_"+str(i)+"</name>\n\t\t\t<uri>model://drone_"+str(i)+"</uri>\n\t\t\t<pose>"+str(radius*math.cos(alpha))+" "+str(radius*math.sin(alpha))+" 10 0 0 0</pose>\n\t\t</include>\n"
         
     
     for line in worldFile:

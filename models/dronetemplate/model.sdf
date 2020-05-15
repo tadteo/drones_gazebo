@@ -19,9 +19,13 @@
             <pose>0 0 0.3 0 0 0</pose>
             <collision name='collision'>
                 <geometry>
-                    <box>
+                    <cylinder>
+                        <radius>.25</radius>
+                        <length>.07</length>
+                    </cylinder>
+                    <!-- <box>
                         <size>.3 .3 .05</size>
-                    </box>
+                    </box> -->
                 </geometry>
             </collision>
             <visual name='visual'>
@@ -55,14 +59,14 @@
                 </inertia>
             </inertial>
             <pose>.116 .116 0.3</pose>
-            <collision name='collision'>
+            <!-- <collision name='collision'>
                 <geometry>
                     <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
                     </cylinder>
                 </geometry>
-            </collision>
+            </collision> -->
             <visual name='visual'>
                 <geometry>
                 <!-- <cylinder>
@@ -90,14 +94,14 @@
                 </inertia>
             </inertial>
             <pose>-.116 -.116 0.3</pose>
-            <collision name='collision'>
+            <!-- <collision name='collision'>
                 <geometry>
                     <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
                     </cylinder>
                 </geometry>
-            </collision>
+            </collision> -->
             <visual name='visual'>
                 <geometry>
                 <!-- <cylinder>
@@ -125,14 +129,14 @@
                 </inertia>
             </inertial>
             <pose>.116 -.116 0.3</pose>
-            <collision name='collision'>
+            <!-- <collision name='collision'>
                 <geometry>
                     <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
                     </cylinder>
                 </geometry>
-            </collision>
+            </collision> -->
             <visual name='visual'>
                 <geometry>
                 <!-- <cylinder>
@@ -160,14 +164,14 @@
                 </inertia>
             </inertial>
             <pose>-.116 .116 0.3</pose>
-            <collision name='collision'>
+            <!-- <collision name='collision'>
                 <geometry>
                     <cylinder>
                         <radius>.1</radius>
                         <length>.02</length>
                     </cylinder>
                 </geometry>
-            </collision>
+            </collision> -->
             <visual name='visual'>
                 <geometry>
                 <!-- <cylinder>

@@ -41,18 +41,6 @@ void Collision::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
   // Make sure the parent sensor is active.
   this->parentSensor->SetActive(true);
-
-  //per il logging
-  int status;
-  std::string command = "mkdir -p /home/matteo/test_paper/collisions/";
-  status = std::system(command.c_str()); // Creating a directory
-  if (status == -1)
-      std::cerr << "Error : " << strerror(errno) << std::endl;
-  else
-      std::cout << "Directories are created" << std::endl;
-  std::string file = "/home/matteo/test_paper/collisions/collisions.txt";
-  myFile.open(file, std::ios::app);
-  myFile<<"---"<<std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -72,7 +60,6 @@ void Collision::OnUpdate()
     if(newContact){
         DroCon.push_back(contacts.contact(i).collision2());
         std::cout << this->parentSensor->Name() << " Collisioni totali "  << DroCon.size()<<std::endl;
-        myFile<<DroCon.size()<<std::endl;
     }
     //std::cout << "Collision between[" << contacts.contact(i).collision1()
     //          << "] and [" << contacts.contact(i).collision2() << "]\n";

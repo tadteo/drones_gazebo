@@ -62,6 +62,7 @@ namespace gazebo
         //for the logging
         bool stopped = true;
         bool first = true;
+        double optimal_trajectory = 0;
         double actual_trajectory = 0;
         std::ofstream myFile;
         common::Time execution_time =0;
@@ -223,8 +224,8 @@ namespace gazebo
             status = std::system(command.c_str()); // Creating a directory
             if (status == -1)
                 std::cerr << "Error : " << strerror(errno) << std::endl;
-            else
-                std::cout << "Directories are created" << std::endl;
+            //else
+                //std::cout << "Directories are created" << std::endl;
             std::string file = "/home/matteo/test_paper/"+world_name+"_test_"+ std::to_string(test)+ "_algo_"+algor+"/log_" + name + ".txt";
             myFile.open(file, std::ios::out);
         }
@@ -240,7 +241,9 @@ namespace gazebo
             {
                 first = false;
                 actual_position = this->model->WorldPose().Pos();
-                myFile << std::abs(actual_position.Distance(final_position)) << std::endl;
+                optimal_trajectory = std::abs(actual_position.Distance(final_position));
+                if(test!=3)
+                    myFile << optimal_trajectory << std::endl;
                 prev_position = this->model->WorldPose().Pos();
             }
 
@@ -249,7 +252,7 @@ namespace gazebo
             actual_trajectory += ds;
             prev_position = this->model->WorldPose().Pos();
 
-            if (actual_position.Distance(final_position) > 0.005 && execution_time.Double() < 2*n )
+            if (actual_position.Distance(final_position) > 0.005) //&& execution_time.Double() < 120*n
             {
 
                 // 0.0 - UPDATE MY POS and VEL
@@ -442,9 +445,6 @@ namespace gazebo
                 }
 
                 //COLLISION AVOIDANCE ALGORITHM HERE
-
-
-
                 if(CA_activated)
                     this->model->SetLinearVel(newVelocity);
                 else
@@ -459,7 +459,6 @@ namespace gazebo
                         
 		        		struct timespec ts;
 		    		    clock_gettime(CLOCK_MONOTONIC, &ts);
-
 		    		    /* using nano-seconds instead of seconds */
 		    		    srand((time_t)ts.tv_nsec);
 		        		int rCirconferenza = (std::rand() % 10);
@@ -467,10 +466,12 @@ namespace gazebo
 		        		float gamma = (std::rand() % 360)*M_PI/180;
 		        		final_position.X(rCirconferenza*std::sin(theta)*std::sin(gamma));
 		        		final_position.Y(rCirconferenza*std::cos(theta));
-		        		final_position.Z(10+(rCirconferenza*std::sin(theta)*std::cos(gamma)));
+		        		final_position.Z(15+(rCirconferenza*std::sin(theta)*std::cos(gamma)));
+                        optimal_trajectory += std::abs(actual_position.Distance(final_position));
 		        	}
             		else{
             		    stopped = false;
+                        myFile << optimal_trajectory <<std::endl;
             		    myFile << actual_trajectory << std::endl;
             		    myFile << execution_time.Double() << std::endl;
             		    myFile.close();
